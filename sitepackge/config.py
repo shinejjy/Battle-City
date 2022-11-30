@@ -12,28 +12,28 @@ player_control = [[pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_a, pygame.K_j, p
 # 不同敌方坦克类型标签
 enemy_label = {
     'tank0': {  # normal
-        'level0': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 1},
-        'level1': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 2},
-        'level2': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 3},
-        'level3': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 4},
+        'level0': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 1, 'score': 100},
+        'level1': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 2, 'score': 200},
+        'level2': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 3, 'score': 300},
+        'level3': {'move_speed': 2, 'fire_speed': 0.8, 'HP': 4, 'score': 400},
     },
     'tank1': {  # high-fire-speed/high-move-speed/low-hp
-        'level0': {'move_speed': 2, 'fire_speed': 0.5, 'HP': 1},
-        'level1': {'move_speed': 3, 'fire_speed': 0.5, 'HP': 1},
-        'level2': {'move_speed': 3, 'fire_speed': 0.4, 'HP': 1},
-        'level3': {'move_speed': 4, 'fire_speed': 0.5, 'HP': 1},
+        'level0': {'move_speed': 2, 'fire_speed': 0.5, 'HP': 1, 'score': 100},
+        'level1': {'move_speed': 3, 'fire_speed': 0.5, 'HP': 1, 'score': 200},
+        'level2': {'move_speed': 3, 'fire_speed': 0.4, 'HP': 1, 'score': 400},
+        'level3': {'move_speed': 4, 'fire_speed': 0.5, 'HP': 1, 'score': 500},
     },
     'tank2': {  # better
-        'level0': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 2},
-        'level1': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 3},
-        'level2': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 4},
-        'level3': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 5},
+        'level0': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 2, 'score': 200},
+        'level1': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 3, 'score': 300},
+        'level2': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 4, 'score': 400},
+        'level3': {'move_speed': 2, 'fire_speed': 0.7, 'HP': 5, 'score': 500},
     },
     'tank3': {  # normal-fire-speed/low-move-speed/high-hp
-        'level0': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 5},
-        'level1': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 6},
-        'level2': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 7},
-        'level3': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 8},
+        'level0': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 5, 'score': 200},
+        'level1': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 6, 'score': 300},
+        'level2': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 7, 'score': 400},
+        'level3': {'move_speed': 1, 'fire_speed': 0.8, 'HP': 8, 'score': 500},
     }
 }
 

@@ -85,6 +85,10 @@ def load_wall_image(sc):
 # 载入游戏结束贴图
 def load_gameover_image(sc):
     gameover = sc.subsurface((4 * unit + 2, 4 * unit + 2, image_unit * 2, image_unit))
+    for x in range(image_unit * 2):
+        for y in range(image_unit):
+            if gameover.get_at((x, y)) == (244, 80, 1):
+                gameover.set_at((x, y), (255, 255, 255))
     config.image_dict['gameover'] = [gameover]
 
 

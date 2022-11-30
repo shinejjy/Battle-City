@@ -145,7 +145,7 @@ class Tank(pygame.sprite.Sprite):
                         initial_position=initial_position[self.dir],
                         dirs=self.dir,
                         types=self.tank_type,
-                        from_tank=self)
+                        from_tank=self.father_tank if self.tank_type == 2 else self)
         if self.tank_type == 0:
             config.Maps.group_lst['player_bullet_group'].add(bullet)
         elif self.tank_type == 1:
@@ -236,6 +236,7 @@ class Player(Tank):
         self.HP = config.player_label[self.level]['HP']
         self.is_move = False
         self.player_index = player_index  # 存放玩家1还是玩家2
+        self.score = 0
         if player_index == 1:
             self.player_control = config.player_control[0]
         else:
@@ -366,6 +367,7 @@ class Enemy(Tank):
         self.enemy_type = enemy_type  # 存放坦克类型
         self.speed = config.enemy_label[self.enemy_type]['level' + str(self.level)]['move_speed']  # 初始化坦克速度
         self.initial_HP = config.enemy_label[self.enemy_type]['level' + str(self.level)]['HP']  # 存放该坦克类型该等级的总血量
+        self.score = config.enemy_label[self.enemy_type]['level' + str(self.level)]['score']  # 存放该坦克被玩家击杀后的分数
         self.HP = self.initial_HP  # 初始化该坦克血量
         self.move_time = time.time() - 1  # 用于监控敌方强制自动改变朝向间隔
 
@@ -420,12 +422,13 @@ class Enemy(Tank):
 
 
 class MiniTank(Tank):
-    def __init__(self, image, images, initial_position, fire_space, move_speed):
+    def __init__(self, image, images, initial_position, fire_space, move_speed, father_tank):
         super().__init__(image, initial_position, fire_space, 2)
         self.images = images
         self.image = self.images[0][0]
         self.speed = move_speed
         self.move_time = time.time() - 1
+        self.father_tank = father_tank
 
     def move(self):
         move_time = time.time()

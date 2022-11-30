@@ -24,7 +24,7 @@ class Bullet(pygame.sprite.Sprite):
             self.speed = [-speed, 0]
         # __type__ 0 表示己方 1 表示敌方
         self.__type__ = types
-        self.__from_tank__ = from_tank  # 表示tank来源
+        self.from_tank = from_tank  # 表示tank来源
 
     def move(self):
         self.rect = self.rect.move(self.speed)
@@ -38,6 +38,8 @@ class Bullet(pygame.sprite.Sprite):
             self.hit_player_or_mini_tank_bullet()
         if self.__type__ == 0 or self.__type__ == 1:
             self.hit_brick()
+            if self.game_over():
+                return True
         elif self.__type__ == 2:
             self.mini_hit_wall()
 
@@ -53,9 +55,10 @@ class Bullet(pygame.sprite.Sprite):
                         boom = Boom(image=config.image_dict['blank'][0],
                                     images=config.image_dict['boom'],
                                     initial_position=enemy.rect.center,
-                                    score=enemy.initial_level,
+                                    score=enemy.score // 100 - 1,
                                     end=2)
                         config.Maps.group_lst['boom_group'].add(boom)
+                        self.from_tank.score += enemy.score
                         del enemy
                     else:  # 否则，扣血
                         enemy.reduce_hp()
@@ -112,6 +115,11 @@ class Bullet(pygame.sprite.Sprite):
                 del self
                 return
 
+    def game_over(self):
+        for base in config.Maps.group_lst['base_group']:
+            if pygame.sprite.collide_rect(base, self):
+                return True
+
     def hit_brick(self):
         f = False
         for brick in config.Maps.group_lst['brick_group']:
@@ -126,7 +134,7 @@ class Bullet(pygame.sprite.Sprite):
 
         for iron in config.Maps.group_lst['iron_group']:
             if pygame.sprite.collide_rect(iron, self):
-                if self.__from_tank__.is_strong:
+                if self.from_tank.is_strong:
                     config.Maps.group_lst['iron_group'].remove(iron)
                 if self.__type__ == 0:
                     config.Maps.group_lst['player_bullet_group'].remove(self)
@@ -135,13 +143,9 @@ class Bullet(pygame.sprite.Sprite):
                 del iron
                 f = True
 
-        for base in config.Maps.group_lst['base_group']:
-            if pygame.sprite.collide_rect(base, self):
-                exit(0)
-
         for slime in config.Maps.group_lst['slime_group']:
             if pygame.sprite.collide_rect(slime, self):
-                if self.__from_tank__.is_strong:
+                if self.from_tank.is_strong:
                     if self.__type__ == 0:
                         config.Maps.group_lst['player_bullet_group'].remove(self)
                     else:
@@ -208,13 +212,14 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class TrackingBomb(pygame.sprite.Sprite):
-    def __init__(self, image, image1, initial_position, to_tank):
+    def __init__(self, image, image1, initial_position, to_tank, from_tank):
         super().__init__()
         self.rect = image.get_rect()
         self.rect.center = initial_position
         self.image = image1
         self.image1 = image1
         self.to_tank = to_tank
+        self.from_tank = from_tank
         self.move()
 
     def move(self):
@@ -239,9 +244,10 @@ class TrackingBomb(pygame.sprite.Sprite):
             boom = Boom(image=config.image_dict['blank'][3],
                         images=config.image_dict['boom'],
                         initial_position=self.to_tank.rect.center,
-                        score=self.to_tank.initial_level,
+                        score=self.to_tank.score // 100 - 1,
                         end=4)
             config.Maps.group_lst['boom_group'].add(boom)
+            self.from_tank.score += self.to_tank.score
             del self
 
 
