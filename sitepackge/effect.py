@@ -59,6 +59,7 @@ class Bullet(pygame.sprite.Sprite):
                                     end=2)
                         config.Maps.group_lst['boom_group'].add(boom)
                         self.from_tank.score += enemy.score
+                        self.from_tank.enemy_kill += 1
                         del enemy
                     else:  # 否则，扣血
                         enemy.reduce_hp()
@@ -248,6 +249,7 @@ class TrackingBomb(pygame.sprite.Sprite):
                         end=4)
             config.Maps.group_lst['boom_group'].add(boom)
             self.from_tank.score += self.to_tank.score
+            self.from_tank.enemy_kill += 1
             del self
 
 
@@ -337,15 +339,6 @@ class Score(pygame.sprite.Sprite):
         else:
             config.Maps.group_lst['score_group'].remove(self)
             del self
-
-
-class Text(pygame.sprite.Sprite):
-    def __init__(self, surface: pygame.Surface, initial_position):
-        super().__init__()
-        width, height = surface.get_size()
-        left, top = initial_position
-        self.rect = pygame.Rect(left, top, width, height)
-        self.image = surface
 
 
 class Cover(pygame.sprite.Sprite):

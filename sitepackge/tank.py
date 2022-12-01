@@ -237,6 +237,7 @@ class Player(Tank):
         self.is_move = False
         self.player_index = player_index  # 存放玩家1还是玩家2
         self.score = 0
+        self.enemy_kill = 0
         if player_index == 1:
             self.player_control = config.player_control[0]
         else:

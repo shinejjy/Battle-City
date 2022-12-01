@@ -131,6 +131,7 @@ class Map:
             cover.updates()
 
     def show(self, pause):
+        is_win = False
         if not pause:
             self.__update__()
             self.food_born()
@@ -138,13 +139,13 @@ class Map:
 
         if len(self.group_lst['enemy_group']) == 0:
             if self.pre_enemy_index == self.end_enemy_index:
-                self.next_iterator()
+                is_win = True
             else:
                 self.enemy_born()
         for group in self.group_lst.values():
             for sprite in group:
                 self.screen.blit(sprite.image, sprite.rect)
-        return self.screen
+        return self.screen, is_win
 
     def next_iterator(self):
         self.map_index += 1
