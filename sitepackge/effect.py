@@ -72,9 +72,10 @@ class Bullet(pygame.sprite.Sprite):
                 config.Maps.group_lst['enemy_bullet_group'].remove(self)
                 if player.cover_level != 0:  # 如果玩家有保护罩
                     player.now_cover_time = time.time() - player.cover_time
-                else:  # 如果玩家无保护罩
+                elif not player.is_invincible:  # 如果玩家无保护罩且无被攻击保护
                     if player.HP > 1:  # 如果玩家血量大于1，扣血
                         player.reduce_hp()
+                        player.invincible(True)
                     else:
                         player.kills()  # 如果玩家血量等于1，死亡
                         boom = Boom(config.image_dict['blank'][0], config.image_dict['boom'], player.rect.center, -1, 2)
@@ -342,15 +343,17 @@ class Score(pygame.sprite.Sprite):
 
 
 class Cover(pygame.sprite.Sprite):
-    def __init__(self, image, initial_position, on_tank):
+    def __init__(self, image, initial_position, on_tank, cover_type):
         super().__init__()
         self.rect = image.get_rect()
         self.rect.topleft = initial_position
         self.image = image
         self.on_tank = on_tank
+        self.cover_type = cover_type
 
     def updates(self):
-        if self.on_tank.cover_level == 0:
+        if self.cover_type == 'normal' and self.on_tank.cover_level == 0 or \
+                self.cover_type == 'special' and self.on_tank.tank_type == 0 and not self.on_tank.is_invincible:
             config.Maps.group_lst['cover_group'].remove(self)
             del self
         else:

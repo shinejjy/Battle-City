@@ -5,8 +5,10 @@ def get_text_surface(text, color, font):
     return font.render(text, True, color)
 
 
-def draw_text(text, color, font, position, surface):
+def draw_text(text, color, font, position, surface, scale):
     image = get_text_surface(text, color, font)
+    width, height = image.get_size()
+    image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
     surface.blit(image, position)
 
 

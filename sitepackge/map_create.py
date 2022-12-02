@@ -1,16 +1,14 @@
 import pygame
 from sitepackge.wall import Tree, Brick, River, Base, Startpoint, Iron, Ice, Slime
 from sitepackge.food import Food
-from sitepackge.image_init import image_unit
+from sitepackge.image_init import image_unit as unit
 from sitepackge.tank import Player, Enemy
-from sitepackge import config
+from sitepackge import config, botton
 import time
 import random
 
-unit = image_unit
 
-
-# food 0复活队友 1渡河 2加移速 3加射速 4升级 5保护罩 6核弹 7子弹增强 8 9加血
+# food 0复活队友 1渡河 2加移速 3加射速 4升级 5保护罩 6核弹 7子弹增强 8 生成小坦克 9加血
 # def create_food_type():
 #     seed = random.randint(0, 100)
 #     random.seed(seed)
@@ -212,19 +210,61 @@ class Map:
         ip = pygame.transform.scale(config.image_dict['player_icon'][0], (32, 32))
         iip = pygame.transform.scale(config.image_dict['player_icon'][1], (32, 32))
         heart = pygame.transform.scale(config.image_dict['heart'][0], (22, 18))
-        self.screen.blit(ip, (10 + unit * 13, 11 * unit))
-        for i in range(self.group_lst['player_group'].sprites()[0].HP):
-            self.screen.blit(heart, (50 + unit * 13 + i * 30, 11 * unit + 7))
-
-        if len(self.group_lst['player_group']) == 2:
-            self.screen.blit(iip, (10 + unit * 13, 11 * unit + 32))
-            for i in range(self.group_lst['player_group'].sprites()[1].HP):
-                self.screen.blit(heart, (50 + unit * 13 + i * 30, 11 * unit + 32 + 7))
-
         bomb = pygame.transform.scale(config.image_dict['bomb'][0], (32, 32))
-        for i, player in enumerate(self.group_lst['player_group']):
-            for j in range(player.n_bomb):
-                self.screen.blit(bomb, (10 + unit * 13 + j * 32, 12 * unit + i * 32))
+        board = pygame.transform.scale(config.image_dict['food'][1], (32, 32))
+        faster = pygame.transform.scale(config.image_dict['food'][2], (32, 32))
+        shoot_faster = pygame.transform.scale(config.image_dict['food'][3], (32, 32))
+        cover = pygame.transform.scale(config.image_dict['food'][5], (32, 32))
+        strong = pygame.transform.scale(config.image_dict['food'][7], (32, 32))
+
+        # ip
+        ip_obj = self.group_lst['player_group'].sprites()[0]
+        self.screen.blit(ip, (10 + unit * 13, 5 * unit))
+        for i in range(ip_obj.HP):
+            self.screen.blit(heart, (50 + unit * 13 + i * 30, 5 * unit + 7))
+        for i in range(ip_obj.n_bomb):
+            self.screen.blit(bomb, (10 + unit * 13 + i * 32, 7 * unit))
+        if ip_obj.is_board:
+            self.screen.blit(board, (10 + unit * 13, 6 * unit + 32))
+        if ip_obj.is_faster:
+            self.screen.blit(faster, (10 + unit * 13 + 32, 6 * unit + 32))
+        if ip_obj.is_strong:
+            self.screen.blit(strong, (10 + unit * 14, 6 * unit + 32))
+        if ip_obj.is_shot_faster:
+            self.screen.blit(shoot_faster, (10 + unit * 14 + 32, 6 * unit + 32))
+        if ip_obj.cover_level:
+            self.screen.blit(cover, (10 + unit * 15, 6 * unit + 32))
+        botton.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 5 * unit + 32), self.screen, 32 / 50)
+        botton.draw_text(f'{ip_obj.score}',
+                         (255, 159, 56), config.font, (10 + unit * 14 + 32, 5 * unit + 32), self.screen, 32 / 50)
+        botton.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 6 * unit), self.screen, 32 / 50)
+        botton.draw_text(f'{ip_obj.enemy_kill}',
+                         (255, 159, 56), config.font, (10 + unit * 15 + 32, 6 * unit), self.screen, 32 / 50)
+
+        # iip
+        if len(self.group_lst['player_group']) == 2:
+            iip_obj = self.group_lst['player_group'].sprites()[1]
+            self.screen.blit(iip, (10 + unit * 13, 9 * unit))
+            for i in range(iip_obj.HP):
+                self.screen.blit(heart, (50 + unit * 13 + i * 30, 9 * unit + 7))
+            for i in range(iip_obj.n_bomb):
+                self.screen.blit(bomb, (10 + unit * 13 + i * 32, 11 * unit))
+            if iip_obj.is_board:
+                self.screen.blit(board, (10 + unit * 13, 10 * unit + 32))
+            if iip_obj.is_faster:
+                self.screen.blit(faster, (10 + unit * 13 + 9, 10 * unit + 32))
+            if iip_obj.is_strong:
+                self.screen.blit(strong, (10 + unit * 14, 10 * unit + 32))
+            if iip_obj.is_shot_faster:
+                self.screen.blit(shoot_faster, (10 + unit * 14 + 32, 10 * unit + 32))
+            if iip_obj.cover_level:
+                self.screen.blit(cover, (10 + unit * 15, 10 * unit + 32))
+            botton.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 9 * unit + 32), self.screen, 32 / 50)
+            botton.draw_text(f'{iip_obj.score}',
+                             (255, 159, 56), config.font, (10 + unit * 14 + 32, 9 * unit + 32), self.screen, 32 / 50)
+            botton.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 10 * unit), self.screen, 32 / 50)
+            botton.draw_text(f'{iip_obj.enemy_kill}',
+                             (255, 159, 56), config.font, (10 + unit * 15 + 32, 10 * unit), self.screen, 32 / 50)
 
 
 # 创建一个Map类，传参map_lst和screen

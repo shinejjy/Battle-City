@@ -2,6 +2,7 @@ import pygame
 import random
 from sitepackge.effect import Bullet, Blood, TrackingBomb, Cover
 from sitepackge import config, image_init
+from sitepackge.image_init import image_unit as unit
 import time
 
 
@@ -193,12 +194,27 @@ class Tank(pygame.sprite.Sprite):
         else:
             if self.is_board:
                 now = time.time()
-                if now - self.now_board_time > self.strong_time:
+                if now - self.now_board_time > self.board_time:
                     self.now_board_time = 0
                     self.is_board = False
                     if pygame.sprite.spritecollideany(self, config.Maps.group_lst['river_group']):
-                        self.old_topleft = self.initial_position
-                        self.rect.topleft = self.initial_position
+                        while True:
+                            x = random.uniform(0, 12 * unit)
+                            y = random.uniform(0, 12 * unit)
+                            self.rect.topleft = (x, y)
+                            if pygame.sprite.spritecollideany(self, config.Maps.group_lst['river_group']) or \
+                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['brick_group']) or \
+                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['iron_group']) or \
+                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['slime_group']) or \
+                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['base_group']):
+                                continue
+                            for player in config.Maps.group_lst['player_group']:
+                                if player != self and pygame.sprite.collide_rect(self, player):
+                                    continue
+                            for enemy in config.Maps.group_lst['enemy_group']:
+                                if enemy != self and pygame.sprite.collide_rect(self, enemy):
+                                    continue
+                        self.old_topleft = self.rect.topleft
 
     def delay_cover(self, is_initial):
         if is_initial:
@@ -206,7 +222,8 @@ class Tank(pygame.sprite.Sprite):
             self.now_cover_time = time.time()
             config.Maps.group_lst['cover_group'].add(Cover(config.image_dict['cover'][self.cover_level],
                                                            self.rect.topleft,
-                                                           self))
+                                                           self,
+                                                           'normal'))
         else:
             if self.cover_level:
                 now = time.time()
@@ -245,6 +262,11 @@ class Player(Tank):
 
         self.bomb = time.time() - 10
         self.n_bomb = 0
+
+        # 受攻击无敌时间3秒
+        self.invincible_time = 999999999999999999 if config.command else 3
+        self.is_invincible = False
+        self.now_invincible_time = 0
 
     def move(self):
         if self.HP == 0:
@@ -288,6 +310,7 @@ class Player(Tank):
         self.old_topleft = list(self.rect.topleft)
 
         self.eat()
+        self.invincible(False)
         self.food_delay()
 
     def updates(self):
@@ -324,6 +347,21 @@ class Player(Tank):
                 self.old_topleft = player.initial_position
                 self.rect.topleft = player.old_topleft
 
+    def invincible(self, is_initial):
+        if is_initial:
+            self.is_invincible = True
+            self.now_invincible_time = time.time()
+            config.Maps.group_lst['cover_group'].add(Cover(config.image_dict['cover'][3],
+                                                           self.rect.topleft,
+                                                           self,
+                                                           'special'))
+        else:
+            if self.is_invincible:
+                now = time.time()
+                if now - self.now_invincible_time > self.invincible_time:
+                    self.now_invincible_time = 0
+                    self.is_invincible = False
+
     def reduce_hp(self):
         self.HP -= 1
 
@@ -341,7 +379,8 @@ class Player(Tank):
             TrackingBomb(config.image_dict['blank'][2],
                          config.image_dict['tracking_bomb'][0],
                          self.rect.center,
-                         config.Maps.group_lst['enemy_group'].sprites()[0])
+                         config.Maps.group_lst['enemy_group'].sprites()[0],
+                         self)
         )
 
     def create_mini_tank(self):
@@ -349,7 +388,8 @@ class Player(Tank):
                                                               config.image_dict['mini_tank'],
                                                               self.rect.topleft,
                                                               self.fire_space - 0.1,
-                                                              self.speed + 2))
+                                                              self.speed + 2,
+                                                              self))
 
 
 class Enemy(Tank):

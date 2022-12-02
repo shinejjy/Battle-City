@@ -1,5 +1,7 @@
 import pygame
 
+command = True
+font = None
 fps = 45  # 帧频
 image_dict = {}  # 存放所有素材图片的字典
 Maps: None  # Map类实例
@@ -47,12 +49,12 @@ player_label = {
 
 pre_enemy = [  # 出生点产生的敌人标签
     [
-        [{'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank2', 'level': 0},
+        [{'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank0', 'level': 0},
          {'enemy_type': 'tank0', 'level': 0}],
-        [{'enemy_type': 'tank1', 'level': 3}, {'enemy_type': 'tank3', 'level': 3}, {'enemy_type': 'tank0', 'level': 1},
-         {'enemy_type': 'tank0', 'level': 0}],
-        [{'enemy_type': 'tank2', 'level': 2}, {'enemy_type': 'tank0', 'level': 2}, {'enemy_type': 'tank2', 'level': 3},
-         {'enemy_type': 'tank0', 'level': 0}]
+        # [{'enemy_type': 'tank1', 'level': 3}, {'enemy_type': 'tank3', 'level': 3}, {'enemy_type': 'tank0', 'level': 1},
+        #  {'enemy_type': 'tank0', 'level': 0}],
+        # [{'enemy_type': 'tank2', 'level': 2}, {'enemy_type': 'tank0', 'level': 2}, {'enemy_type': 'tank2', 'level': 3},
+        #  {'enemy_type': 'tank0', 'level': 0}]
     ],
     [
         [{'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank0', 'level': 0}, {'enemy_type': 'tank2', 'level': 0}],
