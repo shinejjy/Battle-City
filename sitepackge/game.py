@@ -1,7 +1,10 @@
 import time
 import pygame
 from pygame.locals import FULLSCREEN
-from sitepackge import image_init, map_create, config, botton
+from sitepackge import image_init, map_create, config
+from sitepackge.menu import Menu, Button, Text, Image, Gif
+from PIL import Image as Img
+from sitepackge.pic_process import MyGaussianBlur
 import sys
 from decimal import Decimal
 
@@ -41,7 +44,7 @@ class Game:
         self.size = config.size
         self.unit = image_init.unit
         self.is_fullscreen = False
-        config.font = self.my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], 50)
+        config.font = self.my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], 32)
         image_init.load_image()
         self.load_gif_images = []
         for index in range(121):  # 入场动画gif的每一帧图片
@@ -107,17 +110,23 @@ class Game:
         now_screen = pre_screen.copy()
         pre_screen = pygame.Surface(now_screen.get_size())
 
-        restart = botton.Button(text='Restart',
-                                position=(6 * unit, 6 * unit),
-                                color=(39, 165, 176),
-                                font=self.my_font,
-                                scale=2)
-        quit_game = botton.Button(text='Quit',
-                                  position=(7 * unit, 8 * unit),
-                                  color=(224, 80, 1),
-                                  font=self.my_font,
-                                  scale=2)
-
+        lose_stage_menu = Menu()
+        lose_stage_menu.add_button(Button(
+            text='Restart',
+            position=(6 * unit, 6 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=3,
+            event='restart'
+        ))
+        lose_stage_menu.add_button(Button(
+            text='Quit',
+            position=(7 * unit, 8 * unit),
+            color=(224, 80, 1),
+            font=self.my_font,
+            scale=3,
+            event='quit'
+        ))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -127,9 +136,10 @@ class Game:
                         sys.exit()
             pre_screen.fill((0, 0, 0))
             pre_screen.blit(now_screen, (0, 0))
-            if restart.draw(pre_screen):
+            button_event = lose_stage_menu.draw(pre_screen)
+            if button_event == 'restart':
                 return
-            if quit_game.draw(pre_screen):
+            elif button_event == 'quit':
                 pygame.quit()
                 exit(0)
             self.screen.fill((0, 0, 0))
@@ -141,16 +151,60 @@ class Game:
         index = 0
         unit = self.now_width / 17
         width = self.win_gif_images[0].get_width()
-        next_stage = botton.Button(text='Next Stage',
-                                   position=(2 * unit, 10.5 * unit),
-                                   color=(39, 165, 176),
-                                   font=self.my_font,
-                                   scale=1.5)
-        quit_game = botton.Button(text='Quit',
-                                  position=(12 * unit, 10.5 * unit),
-                                  color=(224, 80, 1),
-                                  font=self.my_font,
-                                  scale=1.5)
+        win_stage_menu = Menu()
+        win_stage_menu.add_button(Button(
+            text='Next Stage',
+            position=(2 * unit, 10.5 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=2,
+            event='next stage'
+        ))
+        win_stage_menu.add_button(Button(
+            text='Quit',
+            position=(12 * unit, 10.5 * unit),
+            color=(224, 80, 1),
+            font=self.my_font,
+            scale=2,
+            event='quit'
+        ))
+        win_stage_menu.add_text(Text('Win', (255, 0, 0), self.my_font, (self.now_width / 6, unit * 1), 3))
+        win_stage_menu.add_text(Text('Game', (255, 0, 0), self.my_font, (self.now_width / 7 * 5, unit * 1), 3))
+        win_stage_menu.add_text(Text('Player', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 5), 1.5))
+        win_stage_menu.add_text(Text('Score', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 7), 1.5))
+        win_stage_menu.add_text(Text('Kill Enemy', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 9), 1.5))
+        win_stage_menu.add_text(Text('P1', (127, 127, 127), self.my_font, (self.now_width / 2, unit * 5), 1.5))
+        win_stage_menu.add_text(Text(
+            str(self.Maps.group_lst['player_group'].sprites()[0].score),
+            (127, 127, 127),
+            self.my_font,
+            (self.now_width / 2, unit * 7),
+            1.5
+        ))
+        win_stage_menu.add_text(Text(
+            str(self.Maps.group_lst['player_group'].sprites()[0].enemy_kill),
+            (127, 127, 127),
+            self.my_font,
+            (self.now_width / 2, unit * 9),
+            1.5
+        ))
+        if len(self.Maps.group_lst['player_group']) == 2:
+            win_stage_menu.add_text(Text('P2', (0, 168, 69), self.my_font, (self.now_width / 7 * 5, unit * 5), 1.5))
+            win_stage_menu.add_text(Text(
+                str(self.Maps.group_lst['player_group'].sprites()[1].score),
+                (0, 168, 69),
+                self.my_font,
+                (self.now_width / 7 * 5, unit * 7),
+                1.5
+            ))
+            win_stage_menu.add_text(Text(
+                str(self.Maps.group_lst['player_group'].sprites()[1].enemy_kill),
+                (0, 168, 69),
+                self.my_font,
+                (self.now_width / 7 * 5, unit * 9),
+                1.5
+            ))
+        win_stage_menu.add_gif(Gif(self.win_gif_images, ((self.now_width - width) / 2, unit * 0.5), 1))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -159,51 +213,11 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit()
             self.screen.fill((0, 0, 0))
-            self.screen.blit(self.win_gif_images[index], ((self.now_width - width) / 2, unit * 0.5))
-            botton.draw_text('Win', (255, 0, 0), self.my_font, (self.now_width / 6, unit * 1), self.screen, 2)
-            botton.draw_text('Game', (255, 0, 0), self.my_font, (self.now_width / 7 * 5, unit * 1), self.screen, 2)
-            botton.draw_text('Player', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 5), self.screen, 1)
-            botton.draw_text('Score', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 7), self.screen, 1)
-            botton.draw_text('Kill Enemy', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 9), self.screen,
-                             1)
 
-            botton.draw_text('P1', (127, 127, 127), self.my_font, (self.now_width / 2, unit * 5), self.screen, 1)
-            botton.draw_text(
-                str(self.Maps.group_lst['player_group'].sprites()[0].score),
-                (127, 127, 127),
-                self.my_font,
-                (self.now_width / 2, unit * 7), self.screen,
-                1
-            )
-            botton.draw_text(
-                str(self.Maps.group_lst['player_group'].sprites()[0].enemy_kill),
-                (127, 127, 127),
-                self.my_font,
-                (self.now_width / 2, unit * 9),
-                self.screen,
-                1
-            )
-            if len(self.Maps.group_lst['player_group']) == 2:
-                botton.draw_text('P2', (0, 168, 69), self.my_font, (self.now_width / 7 * 5, unit * 5), self.screen,
-                                 1)
-                botton.draw_text(
-                    str(self.Maps.group_lst['player_group'].sprites()[1].score),
-                    (0, 168, 69),
-                    self.my_font,
-                    (self.now_width / 7 * 5, unit * 7), self.screen,
-                    1
-                )
-                botton.draw_text(
-                    str(self.Maps.group_lst['player_group'].sprites()[1].enemy_kill),
-                    (0, 168, 69),
-                    self.my_font,
-                    (self.now_width / 7 * 5, unit * 9),
-                    self.screen,
-                    1
-                )
-            if next_stage.draw(self.screen):
+            button_event = win_stage_menu.draw(self.screen)
+            if button_event == 'next stage':
                 return
-            if quit_game.draw(self.screen):
+            elif button_event == 'quit':
                 pygame.quit()
                 exit(0)
             pygame.display.update()
@@ -225,6 +239,102 @@ class Game:
                 return True
         for bomb in config.Maps.group_lst['tracking_bomb_group']:
             bomb.move()
+
+    def help_menu(self, bk, menu_image):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+
+    def esc_menu(self):
+        pause_time = time.time()
+        bk = self.screen.copy()
+        width, height = bk.get_size()
+        pygame.image.save(bk, './buffer/tmp.png')
+        image = Img.open('./buffer/tmp.png')
+        image = image.filter(MyGaussianBlur(radius=5))
+        image.save('./buffer/tmp.png')
+        bk = pygame.image.load('./buffer/tmp.png')
+        menu_image = pygame.Surface((int(width / 17 * 16), int(height / 13 * 12)))
+        menu_image.fill((150, 150, 150))
+        menu_image.set_alpha(120)
+        unit = width / 17
+        esc_menu = Menu()
+        esc_menu.add_button(Button(
+            text='RESUME',
+            position=(6 * unit, 2 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=1.5,
+            event='resume',
+            middle_width=width
+        ))
+        esc_menu.add_button(Button(
+            text='HELP',
+            position=(6 * unit, 4 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=1.5,
+            event='help',
+            middle_width=width
+        ))
+        esc_menu.add_button(Button(
+            text='BACK TO GAME',
+            position=(6 * unit, 6 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=1.5,
+            event='back to game',
+            middle_width=width
+        ))
+        esc_menu.add_button(Button(
+            text='QUIT GAME',
+            position=(6 * unit, 8 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=1.5,
+            event='quit game',
+            middle_width=width
+        ))
+        esc_menu.add_button(Button(
+            text='EXIT TO DESKTOP',
+            position=(6 * unit, 10 * unit),
+            color=(39, 165, 176),
+            font=self.my_font,
+            scale=1.5,
+            event='exit to desktop',
+            middle_width=width
+        ))
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(bk, (0, 0))
+            menu_event = esc_menu.draw(self.screen)
+            self.screen.blit(menu_image,
+                             ((width - menu_image.get_width()) / 2, (height - menu_image.get_height()) / 2))
+            if menu_event == 'resume':
+                self.Maps.replay_stage()
+                return
+            elif menu_event == 'help':
+                self.help_menu(bk, menu_image)
+            elif menu_event == 'back to game':
+                self.Maps.food_time += time.time() - pause_time
+                return
+            elif menu_event == 'quit game':
+                pass
+            elif menu_event == 'exit to desktop':
+                pygame.quit()
+                exit(0)
+            pygame.display.update()
+            self.fclock.tick(config.fps)  # 控制刷新的时间
 
     def run_game(self):
         while True:
@@ -251,7 +361,7 @@ class Game:
                                 self.now_width, self.now_height = self.width, self.height
                                 self.is_fullscreen = False
                         elif event.key == pygame.K_ESCAPE:
-                            sys.exit()
+                            self.esc_menu()
                         elif event.key == pygame.K_SPACE:
                             self.pause_game()
                         elif event.key == pygame.K_r:
@@ -260,7 +370,7 @@ class Game:
                 if self.sprites_run():
                     is_lose = True
 
-                now_screen, is_win = self.show_game(False)
+                now_screen, is_win = self.show_game()
 
                 if [x.HP for x in config.Maps.group_lst['player_group']].count(0) == len(
                         config.Maps.group_lst['player_group']):
@@ -275,9 +385,9 @@ class Game:
                 self.win_stage()
                 self.Maps.next_iterator()
 
-    def show_game(self, pause):
+    def show_game(self):
         clear(self.Maps.screen)
-        pre_screen, is_win = self.Maps.show(pause)
+        pre_screen, is_win = self.Maps.show()
         show_line(pre_screen)
         # self.now_width, self.now_height = self.screen.get_size()
         pre_screen = resize(pre_screen, self.now_width, self.now_height)
@@ -290,13 +400,14 @@ class Game:
         return pre_screen.copy(), is_win
 
     def pause_game(self):
-        config.Maps.food_time = time.time()
+        pause_time = time.time()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
+                        self.Maps.food_time += time.time() - pause_time
                         return
                     elif event.key == pygame.K_F11:
                         if not self.is_fullscreen:
@@ -311,4 +422,3 @@ class Game:
                             self.is_fullscreen = False
                     elif event.key == pygame.K_ESCAPE:
                         sys.exit()
-            self.show_game(True)

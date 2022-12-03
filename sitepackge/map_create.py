@@ -3,7 +3,7 @@ from sitepackge.wall import Tree, Brick, River, Base, Startpoint, Iron, Ice, Sli
 from sitepackge.food import Food
 from sitepackge.image_init import image_unit as unit
 from sitepackge.tank import Player, Enemy
-from sitepackge import config, botton
+from sitepackge import config, menu
 import time
 import random
 
@@ -128,11 +128,10 @@ class Map:
         for cover in self.group_lst['cover_group']:
             cover.updates()
 
-    def show(self, pause):
+    def show(self):
         is_win = False
-        if not pause:
-            self.__update__()
-            self.food_born()
+        self.__update__()
+        self.food_born()
         self.prompt_show()
 
         if len(self.group_lst['enemy_group']) == 0:
@@ -234,12 +233,12 @@ class Map:
             self.screen.blit(shoot_faster, (10 + unit * 14 + 32, 6 * unit + 32))
         if ip_obj.cover_level:
             self.screen.blit(cover, (10 + unit * 15, 6 * unit + 32))
-        botton.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 5 * unit + 32), self.screen, 32 / 50)
-        botton.draw_text(f'{ip_obj.score}',
-                         (255, 159, 56), config.font, (10 + unit * 14 + 32, 5 * unit + 32), self.screen, 32 / 50)
-        botton.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 6 * unit), self.screen, 32 / 50)
-        botton.draw_text(f'{ip_obj.enemy_kill}',
-                         (255, 159, 56), config.font, (10 + unit * 15 + 32, 6 * unit), self.screen, 32 / 50)
+        menu.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 5 * unit + 32), self.screen, 1)
+        menu.draw_text(f'{ip_obj.score}',
+                       (255, 159, 56), config.font, (10 + unit * 14 + 32, 5 * unit + 32), self.screen, 1)
+        menu.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 6 * unit), self.screen, 1)
+        menu.draw_text(f'{ip_obj.enemy_kill}',
+                       (255, 159, 56), config.font, (10 + unit * 15 + 32, 6 * unit), self.screen, 1)
 
         # iip
         if len(self.group_lst['player_group']) == 2:
@@ -259,12 +258,12 @@ class Map:
                 self.screen.blit(shoot_faster, (10 + unit * 14 + 32, 10 * unit + 32))
             if iip_obj.cover_level:
                 self.screen.blit(cover, (10 + unit * 15, 10 * unit + 32))
-            botton.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 9 * unit + 32), self.screen, 32 / 50)
-            botton.draw_text(f'{iip_obj.score}',
-                             (255, 159, 56), config.font, (10 + unit * 14 + 32, 9 * unit + 32), self.screen, 32 / 50)
-            botton.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 10 * unit), self.screen, 32 / 50)
-            botton.draw_text(f'{iip_obj.enemy_kill}',
-                             (255, 159, 56), config.font, (10 + unit * 15 + 32, 10 * unit), self.screen, 32 / 50)
+            menu.draw_text(f'score:', (0, 0, 0), config.font, (10 + unit * 13, 9 * unit + 32), self.screen, 1)
+            menu.draw_text(f'{iip_obj.score}',
+                           (255, 159, 56), config.font, (10 + unit * 14 + 32, 9 * unit + 32), self.screen, 1)
+            menu.draw_text(f'kill enemy:', (0, 0, 0), config.font, (10 + unit * 13, 10 * unit), self.screen, 1)
+            menu.draw_text(f'{iip_obj.enemy_kill}',
+                           (255, 159, 56), config.font, (10 + unit * 15 + 32, 10 * unit), self.screen, 1)
 
 
 # 创建一个Map类，传参map_lst和screen
