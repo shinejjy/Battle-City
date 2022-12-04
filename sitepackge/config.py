@@ -1,8 +1,8 @@
 import pygame
 
-command = True
+command = False
 font = None
-fps = 45  # 帧频
+fps = 60  # 帧频
 image_dict = {}  # 存放所有素材图片的字典
 Maps: None  # Map类实例
 width, height = 13 * 64, 13 * 64  # 地图尺寸
@@ -10,7 +10,7 @@ size = 17 * 64, 13 * 64
 bullet_speed = 18  # 子弹速度
 player_control = [[pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_a, pygame.K_j, pygame.K_q],
                   [pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_LEFT, pygame.K_BACKSLASH, pygame.K_KP_ENTER]]
-
+enemy_menu, food_menu, help_menu, esc_menu, lose_stage_menu = None, None, None, None, None
 # 不同敌方坦克类型标签
 enemy_label = {
     'tank0': {  # normal

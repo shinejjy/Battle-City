@@ -116,5 +116,9 @@ README: 前面的内容没有记录...
 
 2022.12.03 增加Menu类
            利用Menu类重构游戏失败和游戏结束代码
-           增加游戏过程中的ESC主菜单
+           增加游戏过程中的MainMenu
+
+2022.12.04 增加MainMenu-HELP-Food
+           增加MainMenu-HELP-Enemy
+           增加load_menu模块
 

@@ -72,3 +72,16 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 !/test.py
+!/buffer/tmp.png
+!/image/food/aboard.gif
+!/image/food/bomb.gif
+!/image/food/cover.gif
+!/image/food/fire_speed.gif
+!/image/food/heart.gif
+!/image/food/minitank.gif
+!/image/food/save.gif
+!/image/food/speed.gif
+!/image/food/strong.gif
+!/image/food/upgrade.gif
+!/image/slime-0.png
+!/image/win.gif

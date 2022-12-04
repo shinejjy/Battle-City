@@ -2,11 +2,12 @@ import time
 import pygame
 from pygame.locals import FULLSCREEN
 from sitepackge import image_init, map_create, config
-from sitepackge.menu import Menu, Button, Text, Image, Gif
+from sitepackge.menu import Menu, Button, Text, Image, Gif, DisplayButton
 from PIL import Image as Img
 from sitepackge.pic_process import MyGaussianBlur
 import sys
 from decimal import Decimal
+from sitepackge.load_menu import load_menu
 
 
 def resize(pre_screen, screen_width, screen_height):
@@ -63,6 +64,7 @@ class Game:
             self.width, self.height = (self.width // 17) * 17, (self.width // 17) * 13
         # self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE, 32)
         self.screen = pygame.display.set_mode((self.width, self.height))
+        load_menu(self.screen)
         self.now_width, self.now_height = self.width, self.height  # 纪录当前的屏幕大小
         pygame.display.set_caption('BattleCity')  # 设置屏幕的标题
         game_icon = pygame.image.load('image/icon.png')
@@ -110,23 +112,6 @@ class Game:
         now_screen = pre_screen.copy()
         pre_screen = pygame.Surface(now_screen.get_size())
 
-        lose_stage_menu = Menu()
-        lose_stage_menu.add_button(Button(
-            text='Restart',
-            position=(6 * unit, 6 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=3,
-            event='restart'
-        ))
-        lose_stage_menu.add_button(Button(
-            text='Quit',
-            position=(7 * unit, 8 * unit),
-            color=(224, 80, 1),
-            font=self.my_font,
-            scale=3,
-            event='quit'
-        ))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -136,7 +121,7 @@ class Game:
                         sys.exit()
             pre_screen.fill((0, 0, 0))
             pre_screen.blit(now_screen, (0, 0))
-            button_event = lose_stage_menu.draw(pre_screen)
+            button_event = config.lose_stage_menu.draw(pre_screen)
             if button_event == 'restart':
                 return
             elif button_event == 'quit':
@@ -240,7 +225,8 @@ class Game:
         for bomb in config.Maps.group_lst['tracking_bomb_group']:
             bomb.move()
 
-    def help_menu(self, bk, menu_image):
+    def enemy_menu(self, bk, menu_image):
+        width, height = bk.get_size()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -248,6 +234,52 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(bk, (0, 0))
+            self.screen.blit(menu_image, (width / 34, height / 26))
+            gif = config.enemy_menu.draw(self.screen)
+            if gif:
+                gif.draw(self.screen)
+            pygame.display.update()
+            self.fclock.tick(20)  # 控制刷新的时间
+
+    def food_menu(self, bk, menu_image):
+        width, height = bk.get_size()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(bk, (0, 0))
+            self.screen.blit(menu_image, (width / 34, height / 26))
+            gif = config.food_menu.draw(self.screen)
+            if gif:
+                gif.draw(self.screen)
+            pygame.display.update()
+            self.fclock.tick(20)  # 控制刷新的时间
+
+    def help_menu(self, bk, menu_image):
+        width, height = bk.get_size()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(bk, (0, 0))
+            self.screen.blit(menu_image, (width / 34, height / 26))
+            menu_event = config.help_menu.draw(self.screen)
+            if menu_event == 'food':
+                self.food_menu(bk, menu_image)
+            elif menu_event == 'enemy':
+                self.enemy_menu(bk, menu_image)
+            pygame.display.update()
+            self.fclock.tick(config.fps)  # 控制刷新的时间
 
     def esc_menu(self):
         pause_time = time.time()
@@ -261,53 +293,6 @@ class Game:
         menu_image = pygame.Surface((int(width / 17 * 16), int(height / 13 * 12)))
         menu_image.fill((150, 150, 150))
         menu_image.set_alpha(120)
-        unit = width / 17
-        esc_menu = Menu()
-        esc_menu.add_button(Button(
-            text='RESUME',
-            position=(6 * unit, 2 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=1.5,
-            event='resume',
-            middle_width=width
-        ))
-        esc_menu.add_button(Button(
-            text='HELP',
-            position=(6 * unit, 4 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=1.5,
-            event='help',
-            middle_width=width
-        ))
-        esc_menu.add_button(Button(
-            text='BACK TO GAME',
-            position=(6 * unit, 6 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=1.5,
-            event='back to game',
-            middle_width=width
-        ))
-        esc_menu.add_button(Button(
-            text='QUIT GAME',
-            position=(6 * unit, 8 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=1.5,
-            event='quit game',
-            middle_width=width
-        ))
-        esc_menu.add_button(Button(
-            text='EXIT TO DESKTOP',
-            position=(6 * unit, 10 * unit),
-            color=(39, 165, 176),
-            font=self.my_font,
-            scale=1.5,
-            event='exit to desktop',
-            middle_width=width
-        ))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -317,9 +302,8 @@ class Game:
                         return
             self.screen.fill((0, 0, 0))
             self.screen.blit(bk, (0, 0))
-            menu_event = esc_menu.draw(self.screen)
-            self.screen.blit(menu_image,
-                             ((width - menu_image.get_width()) / 2, (height - menu_image.get_height()) / 2))
+            self.screen.blit(menu_image, (width / 34, height / 26))
+            menu_event = config.esc_menu.draw(self.screen)
             if menu_event == 'resume':
                 self.Maps.replay_stage()
                 return

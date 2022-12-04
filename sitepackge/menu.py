@@ -52,7 +52,7 @@ class Gif:
 
 
 class DisplayButton:
-    def __init__(self, image, position, scale, content: Image | Text | Gif):
+    def __init__(self, image, position, scale, content: Image | Text | Gif, content_position=(None, None)):
         width, height = image.get_size()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
@@ -60,21 +60,27 @@ class DisplayButton:
         self.content = content
         self.stay_time = None
         self.stay = False
+        self.content_position = content_position
 
-    def draw(self, surface):
+    def draw(self, surface, surface_position):
         surface.blit(self.image, self.rect.topleft)
 
         pos = pygame.mouse.get_pos()
+        pos = (list(pos)[0] - surface_position[0], list(pos)[1] - surface_position[1])
 
         if self.rect.collidepoint(pos):
             if self.stay:
-                if time.time() - self.stay_time > 2:
-                    self.content.draw(surface)
+                if time.time() - self.stay_time > 1:
+                    if self.content_position != (None, None):
+                        surface.blit(self.content, surface_position)
+                    else:
+                        return True
             else:
                 self.stay = True
                 self.stay_time = time.time()
         else:
             self.stay = False
+        return False
 
 
 class Button:
@@ -89,20 +95,21 @@ class Button:
         self.clicked = False
         self.event = event
 
-    def draw(self, surface):
+    def draw(self, surface, surface_position):
         action = False
-        bk = pygame.draw.rect(surface, (0, 0, 0), self.rect)
+        bk = pygame.draw.rect(surface, (150, 150, 150, 150), self.rect)
 
         # 获取鼠标位置：
         pos = pygame.mouse.get_pos()
+        pos = (list(pos)[0] - surface_position[0], list(pos)[1] - surface_position[1])
 
+        pygame.draw.rect(surface, (255, 255, 255), self.rect, 3)
         # 鼠标划过按钮并点击
         if bk.collidepoint(pos):
             pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
             if pygame.mouse.get_pressed()[0] and not self.clicked:
                 self.clicked = True
                 action = True
-                pygame.draw.rect(surface, (255, 255, 255), self.rect, 3)
 
         if not pygame.mouse.get_pressed()[0]:
             self.clicked = False
@@ -116,19 +123,22 @@ class Menu:
     def __init__(self, bk_image=None):
         self.bk_image = bk_image
         self.button_group = []
+        self.display_button_group = []
         self.text_group = []
         self.image_group = []
         self.gif_group = []
-        self.sub_menu_group = []
 
-    def draw(self, surface):
+    def draw(self, surface, surface_position=(0, 0)):
         if self.bk_image:
             surface.blit(self.bk_image, (0, 0))
         for text in self.text_group:
             text.draw(surface)
         for button in self.button_group:
-            if button.draw(surface):
+            if button.draw(surface, surface_position):
                 return button.event
+        for display_button in self.display_button_group:
+            if display_button.draw(surface, surface_position):
+                return display_button.content
         for image in self.image_group:
             image.draw(surface)
         for gif in self.gif_group:
@@ -145,3 +155,6 @@ class Menu:
 
     def add_gif(self, gif: Gif):
         self.gif_group.append(gif)
+
+    def add_display_button(self, display_button: DisplayButton):
+        self.display_button_group.append(display_button)
