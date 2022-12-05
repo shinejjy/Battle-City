@@ -16,11 +16,14 @@ def draw_text(text, color, font, position, surface, scale):
 
 
 class Text:
-    def __init__(self, text, color, font, position, scale):
+    def __init__(self, text, color, font, position, scale, mid_width=0, mid_height=0):
         self.image = get_text_surface(text, color, font)
         width, height = self.image.get_size()
         self.image = pygame.transform.scale(self.image, (int(width * scale), int(height * scale)))
-        self.position = position
+        x_pos = mid_width - int(width * scale / 2) if mid_width else position[0]
+        y_pos = mid_height - int(height * scale / 2) if mid_height else position[1]
+
+        self.position = (x_pos, y_pos)
 
     def draw(self, surface):
         surface.blit(self.image, self.position)
@@ -37,12 +40,15 @@ class Image:
 
 
 class Gif:
-    def __init__(self, images, position, scale):
+    def __init__(self, images, position, scale, mid_width=0, mid_height=0):
         self.images = images[:]
         width, height = images[0].get_size()
         for index, image in enumerate(self.images):
             self.images[index] = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-        self.position = position
+        x_pos = mid_width - int(width * scale / 2) if mid_width else position[0]
+        y_pos = mid_height - int(height * scale / 2) if mid_height else position[1]
+
+        self.position = (x_pos, y_pos)
         self.index = 0
         self.len = len(self.images)
 
@@ -52,15 +58,17 @@ class Gif:
 
 
 class DisplayButton:
-    def __init__(self, image, position, scale, content: Image | Text | Gif, content_position=(None, None)):
+    def __init__(self, image, position, scale, content: [Image | Text | Gif], mid_width=0, mid_height=0):
         width, height = image.get_size()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.topleft = position
+        x_pos = mid_width - int(width * scale / 2) if mid_width else position[0]
+        y_pos = mid_height - int(height * scale / 2) if mid_height else position[1]
+
+        self.rect.topleft = (x_pos, y_pos)
         self.content = content
         self.stay_time = None
         self.stay = False
-        self.content_position = content_position
 
     def draw(self, surface, surface_position):
         surface.blit(self.image, self.rect.topleft)
@@ -71,10 +79,7 @@ class DisplayButton:
         if self.rect.collidepoint(pos):
             if self.stay:
                 if time.time() - self.stay_time > 1:
-                    if self.content_position != (None, None):
-                        surface.blit(self.content, surface_position)
-                    else:
-                        return True
+                    return True
             else:
                 self.stay = True
                 self.stay_time = time.time()
@@ -84,14 +89,15 @@ class DisplayButton:
 
 
 class Button:
-    def __init__(self, text, position, color, font, scale, event, middle_width=0):
+    def __init__(self, text, position, color, font, scale, event, mid_width=0, mid_height=0):
         image = get_text_surface(text, color, font)
         width, height = image.get_size()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
-        self.rect.topleft = position
-        if middle_width:
-            self.rect.topleft = (middle_width - self.image.get_width()) / 2, position[1]
+        x_pos = mid_width - int(width * scale / 2) if mid_width else position[0]
+        y_pos = mid_height - int(height * scale / 2) if mid_height else position[1]
+
+        self.rect.topleft = (x_pos, y_pos)
         self.clicked = False
         self.event = event
 
@@ -129,20 +135,22 @@ class Menu:
         self.gif_group = []
 
     def draw(self, surface, surface_position=(0, 0)):
+        event = None
         if self.bk_image:
             surface.blit(self.bk_image, (0, 0))
         for text in self.text_group:
             text.draw(surface)
         for button in self.button_group:
             if button.draw(surface, surface_position):
-                return button.event
+                event = button.event
         for display_button in self.display_button_group:
             if display_button.draw(surface, surface_position):
-                return display_button.content
+                event = display_button.content
         for image in self.image_group:
             image.draw(surface)
         for gif in self.gif_group:
             gif.draw(surface)
+        return event
 
     def add_text(self, text: Text):
         self.text_group.append(text)

@@ -1,6 +1,7 @@
 import pygame
 
 command = False
+multiplayer = 2
 font = None
 fps = 60  # 帧频
 image_dict = {}  # 存放所有素材图片的字典
@@ -9,8 +10,9 @@ width, height = 13 * 64, 13 * 64  # 地图尺寸
 size = 17 * 64, 13 * 64
 bullet_speed = 18  # 子弹速度
 player_control = [[pygame.K_w, pygame.K_d, pygame.K_s, pygame.K_a, pygame.K_j, pygame.K_q],
-                  [pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_LEFT, pygame.K_BACKSLASH, pygame.K_KP_ENTER]]
-enemy_menu, food_menu, help_menu, esc_menu, lose_stage_menu = None, None, None, None, None
+                  [pygame.K_UP, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RETURN, pygame.K_p]]
+enemy_menu, food_menu, help_menu, esc_menu, lose_stage_menu, player_menu, main_menu = \
+    None, None, None, None, None, None, None
 # 不同敌方坦克类型标签
 enemy_label = {
     'tank0': {  # normal
@@ -123,7 +125,7 @@ Map_data = [  # 地图数据
         [0, 0, 0, 0, 25, 25, 25, 25, 25, 0, 0, 0, 0],
         [0, 0, 23, 0, oooo, oooo, oooo, oooo, oooo, 0, oooo, oooo, 0],
         [25, 23, oooo, 0, 0, 0, 0, 0, 0, 0, oooo, oooo, 0],
-        [0, 0, 23, 0, 1, 22, 22, 22, 2, 0, 0, 0, 0],
+        [0, 0, 23, 0, 1, 22, 22, 22, multiplayer, 0, 0, 0, 0],
         [25, 23, oooo, 0, oooo, xxxx, 23, xxxx, oooo, 0, oooo, oooo, 0],
         [0, oooo, 23, 0, xxxx, 23, 30, 23, xxxx, 0, oooo, 0, 0],
         [25, 23, 0, 0, oooo, xxxx, 23, xxxx, oooo, 0, 0, 0, 0],
@@ -139,7 +141,7 @@ Map_data = [  # 地图数据
         [25, 0, 0, xxxx, 0, 0, xxxx, 0, 0, xxxx, 0, 0, 25],
         [25, 0, 23, 0, oooo, oooo, oooo, oooo, oooo, 0, 0, 23, 25],
         [25, 0, 23, 0, oooo, oooo, oooo, oooo, oooo, 0, 0, 23, 25],
-        [25, 0, 0, 1, oooo, oooo, 30, oooo, oooo, 2, 23, 23, 25],
+        [25, 0, 0, 1, oooo, oooo, 30, oooo, oooo, multiplayer, 23, 23, 25],
         [25, 23, 23, 0, oooo, oooo, oooo, oooo, oooo, 0, 0, 0, 25],
         [25, 0, 0, 0, oooo, oooo, oooo, oooo, oooo, 0, 23, 0, 25],
         [25, 0, 23, 0, 0, 0, 0, 23, 0, 0, 0, 0, 25],
@@ -161,7 +163,7 @@ Map_data = [  # 地图数据
         [0, oooo, oooo, 0, 0, oooo, oooo, oooo, 0, oooo, 21, 21, 22],
         [0, 21, oooo, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [oooo, 21, 23, 25, 0, oooo, oooo, oooo, 0, 0, 0, 0, 23],
-        [oooo, oooo, 0, 25, 1, oooo, 30, oooo, 2, 0, 0, 23, 23]
+        [oooo, oooo, 0, 25, 1, oooo, 30, oooo, multiplayer, 0, 0, 23, 23]
     ],
     [
         [31, xxxx, 23, 23, 25, 25, 25, 25, 25, 0, 23, 23, 31],
@@ -171,7 +173,7 @@ Map_data = [  # 地图数据
         [25, 23, 0, 21, 22, 22, 22, 22, 22, 21, 23, 23, 25],
         [25, 23, 23, 21, 22, 1, 22, 22, 22, 21, 23, 23, 25],
         [25, 23, 23, xxxx, 22, 22, 30, 22, 22, xxxx, 0, 23, 25],
-        [25, 23, 23, 21, 22, 22, 22, 2, 22, 21, 23, 23, 25],
+        [25, 23, 23, 21, 22, 22, 22, multiplayer, 22, 21, 23, 23, 25],
         [25, 23, 0, 21, 22, 22, 22, 22, 22, 21, 0, 23, 25],
         [0, 23, oooo, xxxx, 21, 21, xxxx, 21, 21, xxxx, oooo, 23, 23],
         [23, 23, oooo, oooo, 0, 23, 23, 23, 0, oooo, oooo, 0, 23],
@@ -192,7 +194,7 @@ Map_data = [  # 地图数据
         [0, oooo, 0, oooo, 0, oooo, 0, oooo, 0, oooo, 0, oooo, 0],
         [0, oooo, 0, oooo, 0, 0, 0, 0, 0, oooo, 0, oooo, 0],
         [0, oooo, 0, oooo, 0, oooo, oooo, oooo, 0, oooo, 0, oooo, 0],
-        [0, 0, 0, 0, 1, oooo, 30, oooo, 2, 0, 0, 0, 0]
+        [0, 0, 0, 0, 1, oooo, 30, oooo, multiplayer, 0, 0, 0, 0]
     ],
 
     [
@@ -206,7 +208,7 @@ Map_data = [  # 地图数据
         [22, 0, oooo, oooo, 0, 0, 0, 0, 0, oooo, oooo, 0, 0],
         [22, 0, oooo, oooo, 0, 0, 0, 0, 0, oooo, oooo, 0, 0],
         [22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [22, 0, 0, 1, xxxx, xxxx, xxxx, xxxx, xxxx, 2, 0, 0, 0],
+        [22, 0, 0, 1, xxxx, xxxx, xxxx, xxxx, xxxx, multiplayer, 0, 0, 0],
         [22, 0, 0, 0, xxxx, oooo, oooo, oooo, xxxx, 0, 0, 0, 0],
         [22, 0, 0, 0, xxxx, oooo, 30, oooo, xxxx, 0, 0, 0, 0]
     ],
@@ -224,7 +226,7 @@ Map_data = [  # 地图数据
         [0, oooo, 0, oooo, 0, oooo, 0, oooo, 0, oooo, 0, oooo, 0],
         [0, oooo, 0, oooo, 0, 0, 0, 0, 0, oooo, 0, oooo, 0],
         [0, oooo, 0, oooo, 0, oooo, oooo, oooo, 0, oooo, 0, oooo, 0],
-        [0, 0, 0, 0, 1, oooo, 30, oooo, 2, 0, 0, 0, 0]
+        [0, 0, 0, 0, 1, oooo, 30, oooo, multiplayer, 0, 0, 0, 0]
     ],
 
     [
@@ -237,7 +239,7 @@ Map_data = [  # 地图数据
         [0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0],
         [0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 21, 0, 0, oooo, 0, 0, 0, 0, 0, 0],
-        [0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, multiplayer, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, oooo, oooo, oooo, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, oooo, 30, oooo, 0, 0, 0, 0, 0]
@@ -256,7 +258,7 @@ Map_data = [  # 地图数据
         [0, 23, 23, 22, 23, 0, 22, 23, 23, 23, 23, 23, 23],
         [0, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
         [1, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
-        [2, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
+        [multiplayer, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23],
     ],
     [
 

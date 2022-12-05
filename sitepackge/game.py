@@ -255,11 +255,31 @@ class Game:
             self.screen.fill((0, 0, 0))
             self.screen.blit(bk, (0, 0))
             self.screen.blit(menu_image, (width / 34, height / 26))
-            gif = config.food_menu.draw(self.screen)
-            if gif:
-                gif.draw(self.screen)
+            content = config.food_menu.draw(self.screen)
+            if content:
+                for inside in content:
+                    inside.draw(self.screen)
             pygame.display.update()
-            self.fclock.tick(20)  # 控制刷新的时间
+            self.fclock.tick(10)  # 控制刷新的时间
+
+    def player_menu(self, bk, menu_image):
+        width, height = bk.get_size()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(bk, (0, 0))
+            self.screen.blit(menu_image, (width / 34, height / 26))
+            content = config.player_menu.draw(self.screen)
+            if content:
+                for inside in content:
+                    inside.draw(self.screen)
+            pygame.display.update()
+            self.fclock.tick(10)  # 控制刷新的时间
 
     def help_menu(self, bk, menu_image):
         width, height = bk.get_size()
@@ -278,6 +298,8 @@ class Game:
                 self.food_menu(bk, menu_image)
             elif menu_event == 'enemy':
                 self.enemy_menu(bk, menu_image)
+            elif menu_event == 'player':
+                self.player_menu(bk, menu_image)
             pygame.display.update()
             self.fclock.tick(config.fps)  # 控制刷新的时间
 
@@ -406,3 +428,15 @@ class Game:
                             self.is_fullscreen = False
                     elif event.key == pygame.K_ESCAPE:
                         sys.exit()
+
+    def main_menu(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+            event = config.main_menu.draw(self.screen)
+            pygame.display.update()
+            self.fclock.tick(config.fps)  # 控制刷新的时间

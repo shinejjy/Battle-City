@@ -116,9 +116,12 @@ README: 前面的内容没有记录...
 
 2022.12.03 增加Menu类
            利用Menu类重构游戏失败和游戏结束代码
-           增加游戏过程中的MainMenu
+           增加游戏过程中的EscMenu
 
-2022.12.04 增加MainMenu-HELP-Food
-           增加MainMenu-HELP-Enemy
+2022.12.04 增加EscMenu-HELP-Food
+           增加EscMenu-HELP-Enemy
            增加load_menu模块
+
+2022.12.05 优化EscMenu-HELP-Food的食物介绍显示
+           增加食物介绍的文字描述
 

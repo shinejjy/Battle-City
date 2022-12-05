@@ -41,6 +41,6 @@ class MyGaussianBlur(ImageFilter.Filter):
 
 if __name__ == '__main__':
     lst = ['save', 'aboard', 'speed', 'fire_speed', 'upgrade', 'cover', 'bomb', 'strong', 'minitank', 'heart']
-    # for ele in lst:
-    #     gif_to_png(f'../image/food/{ele}.gif', f'../image/food/{ele}_gif/')
+    for ele in lst:
+        gif_to_png(f'../image/food/{ele}.gif', f'../image/food/{ele}_gif/')
     delete_file(lst)

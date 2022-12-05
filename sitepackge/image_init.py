@@ -221,7 +221,7 @@ def load_food_gif():
     print("正在加载食物效果动图......")
     food_gif = []
     name_gif = ['save', 'aboard', 'speed', 'fire_speed', 'upgrade', 'cover', 'bomb', 'strong', 'minitank', 'heart']
-    n_gif = [55, 81, 102, 109, 8, 47, 143, 110, 61, 11]
+    n_gif = [16, 94, 76, 109, 151, 28, 94, 205, 46, 19]
     for i in range(10):
         certain_gif = []
         for j in range(0, n_gif[i], 3):
