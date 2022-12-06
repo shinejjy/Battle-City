@@ -1,14 +1,13 @@
 import time
 import pygame
 from pygame.locals import FULLSCREEN
-from sitepackge import config
-from sitepackge.load_game import load_resource, map_create
-from sitepackge.load_game.menu import Menu, Button, Text, Gif
+from sitepackge import image_init, map_create, config
+from sitepackge.menu import Menu, Button, Text, Image, Gif, DisplayButton
 from PIL import Image as Img
-from sitepackge.load_game.pic_process import MyGaussianBlur
+from sitepackge.pic_process import MyGaussianBlur
 import sys
 from decimal import Decimal
-from sitepackge.load_game.load_menu import load_menu
+from sitepackge.load_menu import load_menu
 
 
 def resize(pre_screen, screen_width, screen_height):
@@ -36,20 +35,18 @@ class Game:
     def __init__(self):
         pygame.init()  # 初始化pygame
         pygame.font.init()
-        pygame.mixer.pre_init(44100, 16, 2, 4096)
         self.now_width, self.now_height = None, None
         self.full_width, self.full_height = None, None
         self.width, self.height = None, None
         self.Maps = None
-        self.unit = load_resource.image_unit
+        self.unit = image_init.image_unit
         self.fclock = pygame.time.Clock()
         self.screen = None
         self.size = config.size
-        self.unit = load_resource.unit
+        self.unit = image_init.unit
         self.is_fullscreen = False
         config.font = self.my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], 32)
-        load_resource.load_image()
-        load_resource.load_audio()
+        image_init.load_image()
         self.load_gif_images = []
         for index in range(121):  # 入场动画gif的每一帧图片
             self.load_gif_images.append(pygame.image.load(f"./image/loading_png/gif{index}.png"))
@@ -72,11 +69,8 @@ class Game:
         pygame.display.set_caption('BattleCity')  # 设置屏幕的标题
         game_icon = pygame.image.load('image/icon.png')
         pygame.display.set_icon(game_icon)  # 设置屏幕的图标
-
-    def init_map(self, index):
         map_create.map_init(pygame.Surface(self.size))  # 传入与原始尺寸相同的surface
         self.Maps = config.Maps
-        self.Maps.select_level(index)
 
     def loading_movie(self):
         for index in range(121):
@@ -88,8 +82,6 @@ class Game:
         pygame.event.clear()
 
     def lose_stage(self, now_screen):
-        pygame.mixer.music.load(config.audio_dict['lose'])
-        pygame.mixer.music.play()
         width, height = now_screen.get_size()
         unit = Decimal(width // 17)
         gameover = config.image_dict['gameover'][0].copy()
@@ -141,8 +133,6 @@ class Game:
             self.fclock.tick(60)  # 控制刷新的时间
 
     def win_stage(self):
-        pygame.mixer.music.load(config.audio_dict['win'])
-        pygame.mixer.music.play()
         index = 0
         unit = self.now_width / 17
         width = self.win_gif_images[0].get_width()
@@ -235,57 +225,6 @@ class Game:
         for bomb in config.Maps.group_lst['tracking_bomb_group']:
             bomb.move()
 
-    def select_level_menu(self, bk):
-        width, height = bk.get_size()
-        unit = width / 17
-        my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit))
-        index = 1
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        return
-            self.screen.fill((0, 0, 0))
-            event = config.select_level_menu.draw(self.screen)
-            if event == "<":
-                if index > 1:
-                    index -= 1
-                else:
-                    index = 11
-                config.select_level_menu.clear_text()
-                config.select_level_menu.add_text(Text(
-                    text=f"Level {index}",
-                    position=(None, None),
-                    color=(255, 255, 255),
-                    font=my_font,
-                    scale=1,
-                    mid_width=width / 2,
-                    mid_height=height / 2
-                ))
-            elif event == ">":
-                if index < 11:
-                    index += 1
-                else:
-                    index = 1
-                config.select_level_menu.clear_text()
-                config.select_level_menu.add_text(Text(
-                    text=f"Level {index}",
-                    position=(None, None),
-                    color=(255, 255, 255),
-                    font=my_font,
-                    scale=1,
-                    mid_width=width / 2,
-                    mid_height=height / 2
-                ))
-            elif event == 'play':
-                self.init_map(index - 1)
-                if self.run_game():
-                    return
-            pygame.display.update()
-            self.fclock.tick(20)  # 控制刷新的时间
-
     def enemy_menu(self, bk, menu_image):
         width, height = bk.get_size()
         while True:
@@ -343,7 +282,6 @@ class Game:
             self.fclock.tick(10)  # 控制刷新的时间
 
     def help_menu(self, bk, menu_image):
-        pygame.time.delay(100)
         width, height = bk.get_size()
         while True:
             for event in pygame.event.get():
@@ -397,7 +335,7 @@ class Game:
                 self.Maps.food_time += time.time() - pause_time
                 return
             elif menu_event == 'quit game':
-                return True
+                pass
             elif menu_event == 'exit to desktop':
                 pygame.quit()
                 exit(0)
@@ -429,8 +367,7 @@ class Game:
                                 self.now_width, self.now_height = self.width, self.height
                                 self.is_fullscreen = False
                         elif event.key == pygame.K_ESCAPE:
-                            if self.esc_menu():
-                                return
+                            self.esc_menu()
                         elif event.key == pygame.K_SPACE:
                             self.pause_game()
                         elif event.key == pygame.K_r:
@@ -493,10 +430,6 @@ class Game:
                         sys.exit()
 
     def main_menu(self):
-        width, height = self.screen.get_size()
-        menu_image = pygame.Surface((int(width / 17 * 16), int(height / 13 * 12)))
-        menu_image.fill((150, 150, 150))
-        menu_image.set_alpha(120)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -504,21 +437,6 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return
-            self.screen.fill((0, 0, 0))
             event = config.main_menu.draw(self.screen)
-            if event == 'quit':
-                sys.exit(0)
-            elif event == 'help':
-                self.help_menu(self.screen, menu_image)
-            elif event == 'single':
-                config.multiplayer = 0
-                config.update_map()
-                self.select_level_menu(self.screen)
-                pygame.time.delay(100)
-            elif event == 'multi':
-                config.multiplayer = 2
-                config.update_map()
-                self.select_level_menu(self.screen)
-                pygame.time.delay(100)
             pygame.display.update()
             self.fclock.tick(config.fps)  # 控制刷新的时间

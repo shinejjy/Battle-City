@@ -1,10 +1,9 @@
 import pygame
-from sitepackge.element.wall import Tree, Brick, River, Base, Startpoint, Iron, Ice, Slime
-from sitepackge.element.food import Food
-from sitepackge.load_game.load_resource import image_unit as unit
-from sitepackge.element.tank import Player, Enemy
-from sitepackge import config
-from sitepackge.load_game import menu
+from sitepackge.wall import Tree, Brick, River, Base, Startpoint, Iron, Ice, Slime
+from sitepackge.food import Food
+from sitepackge.image_init import image_unit as unit
+from sitepackge.tank import Player, Enemy
+from sitepackge import config, menu
 import time
 import random
 
@@ -108,19 +107,12 @@ class Map:
     def __init__(self, screen):
         self.map_index = 0
         self.pre_enemy_index = 0
-        self.end_enemy_index = None
-        self.end_map_index = len(config.Map_data)
-        self.group_lst = None
+        self.end_enemy_index = len(config.pre_enemy[self.map_index])
+        self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
         self.screen = screen
         self.born_time = time.time() - 0.2
         self.food_time = time.time()
         self.__during_born__ = False
-
-    def select_level(self, index):
-        self.map_index = index
-        self.pre_enemy_index = 0
-        self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
-        self.end_enemy_index = len(config.pre_enemy[self.map_index])
 
     def __update__(self):
         for river in self.group_lst['river_group']:
@@ -153,8 +145,6 @@ class Map:
         return self.screen, is_win
 
     def next_iterator(self):
-        if self.map_index == self.end_map_index:
-            return True
         self.map_index += 1
         self.pre_enemy_index = 0
         self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
@@ -211,14 +201,10 @@ class Map:
             self.group_lst['food_group'].add(food)
 
     def prompt_show(self):
-        my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(64 / 2))
-        self.screen.blit(menu.get_text_surface(f"Level {self.map_index + 1}", (0, 0, 0), my_font),
-                         (10 + unit * 13, 10))
-        n_enemy = \
-            (len(config.pre_enemy[self.map_index]) - self.pre_enemy_index) * \
-            len(config.pre_enemy[self.map_index][0]) + len(self.group_lst['enemy_group'])
+        n_enemy = (len(config.pre_enemy[self.map_index]) - self.pre_enemy_index) * \
+                  len(config.pre_enemy[self.map_index][0]) + len(self.group_lst['enemy_group'])
         for i in range(n_enemy):
-            self.screen.blit(config.image_dict['enemy_icon'][0], (10 + unit * 13 + 40 * (i % 6), 64 + 40 * (i // 6)))
+            self.screen.blit(config.image_dict['enemy_icon'][0], (10 + unit * 13 + 40 * (i % 6), 10 + 40 * (i // 6)))
 
         ip = pygame.transform.scale(config.image_dict['player_icon'][0], (32, 32))
         iip = pygame.transform.scale(config.image_dict['player_icon'][1], (32, 32))

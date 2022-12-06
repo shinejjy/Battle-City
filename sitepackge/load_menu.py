@@ -1,6 +1,6 @@
 from sitepackge import config
 import pygame
-from sitepackge.load_game.menu import Image, Text, Gif, DisplayButton, Button, Menu, get_text_surface
+from sitepackge.menu import Image, Text, Gif, DisplayButton, Button, Menu, get_text_surface
 
 
 def load_enemy_menu(bk):
@@ -261,44 +261,14 @@ def load_main_menu(bk):
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
     # blank0 iron1 river2 ice3 slime4 tree5 brick6
     logo_index = [
-        [6, 6, 6, 6, 6, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 6, 0, 1, 0, 0, 1, 1],
-        [0, 0, 6, 0, 0, 0, 0, 4, 0, 5, 0, 0, 6, 6, 0, 0, 6, 0, 1, 0, 1, 1, 0],
-        [0, 0, 6, 0, 0, 0, 5, 5, 5, 5, 5, 0, 6, 0, 6, 0, 6, 0, 1, 1, 1, 0, 0],
-        [0, 0, 6, 0, 0, 0, 5, 5, 0, 5, 5, 0, 6, 0, 0, 6, 6, 0, 1, 0, 1, 1, 0],
-        [0, 0, 6, 0, 0, 0, 5, 0, 0, 0, 5, 0, 6, 0, 0, 0, 6, 0, 1, 0, 0, 1, 1]
+        [6, 6, 6, 6, 6, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 0, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 6, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    logo = pygame.Surface((23 * unit / 2, 5 * unit / 2))
-    logo.fill((0, 0, 0))
-    iron = pygame.transform.scale(config.image_dict['iron'][0], (unit / 4, unit / 4))
-    river = pygame.transform.scale(config.image_dict['river'][0], (unit / 2, unit / 2))
-    ice = pygame.transform.scale(config.image_dict['ice'][0], (unit / 2, unit / 2))
-    slime = pygame.transform.scale(config.image_dict['slime'][0], (unit / 2, unit / 2))
-    tree = pygame.transform.scale(config.image_dict['tree'][0], (unit / 2, unit / 2))
-    brick = pygame.transform.scale(config.image_dict['brick'][0], (unit / 4, unit / 4))
-    for i in range(5):
-        for j in range(23):
-            if logo_index[i][j] == 1:
-                for x in range(4):
-                    logo.blit(iron, (j * unit / 2 + (x % 2) * unit / 4, i * unit / 2 + (x // 2) * unit / 4))
-            elif logo_index[i][j] == 2:
-                logo.blit(river, (j * unit / 2, i * unit / 2))
-            elif logo_index[i][j] == 3:
-                logo.blit(river, (j * unit / 2, i * unit / 2))
-            elif logo_index[i][j] == 4:
-                logo.blit(slime, (j * unit / 2, i * unit / 2))
-            elif logo_index[i][j] == 5:
-                logo.blit(tree, (j * unit / 2, i * unit / 2))
-            elif logo_index[i][j] == 6:
-                for x in range(4):
-                    logo.blit(brick, (j * unit / 2 + (x % 2) * unit / 4, i * unit / 2 + (x // 2) * unit / 4))
+    logo = pygame.Surface((23 * unit, 5 * unit))
     config.main_menu = Menu()
-    config.main_menu.add_image(Image(
-        image=logo,
-        position=(None, None),
-        scale=1,
-        mid_width=width / 2,
-        mid_height=2.5 * unit
-    ))
     config.main_menu.add_button(Button(
         text="SinglePlayer Mode",
         color=(255, 43, 123),
@@ -307,88 +277,37 @@ def load_main_menu(bk):
         font=my_font,
         scale=2,
         mid_width=width / 2,
-        mid_height=5 * unit
+        mid_height=5.5 * unit
     ))
     config.main_menu.add_button(Button(
-        text=" MultiPlayer Mode ",
+        text="MultiPlayer Mode",
         color=(255, 43, 123),
         event='multi',
         position=(None, None),
         font=my_font,
         scale=2,
         mid_width=width / 2,
-        mid_height=7 * unit
+        mid_height=7.5 * unit
     ))
     config.main_menu.add_button(Button(
-        text="            Help            ",
+        text="Help",
         color=(255, 43, 123),
         event='help',
         position=(None, None),
         font=my_font,
         scale=2,
         mid_width=width / 2,
-        mid_height=9 * unit
+        mid_height=9.5 * unit
     ))
     config.main_menu.add_button(Button(
-        text="            Quit            ",
+        text="Quit",
         color=(255, 43, 123),
         event='quit',
         position=(None, None),
         font=my_font,
         scale=2,
         mid_width=width / 2,
-        mid_height=11 * unit
-    ))
-
-
-def select_level_menu(bk):
-    width, height = bk.get_size()
-    unit = width / 17
-    my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit))
-    config.select_level_menu = Menu()
-    config.select_level_menu.add_button(Button(
-        text="<",
-        position=(None, None),
-        color=(255, 255, 255),
-        font=my_font,
-        scale=1,
-        event="<",
-        mid_width=5 * unit,
-        mid_height=height / 2,
-        bk_color=(0, 0, 0),
-        effect=False
-    ))
-    config.select_level_menu.add_button(Button(
-        text=">",
-        position=(None, None),
-        color=(255, 255, 255),
-        font=my_font,
-        scale=1,
-        event=">",
-        mid_width=12 * unit,
-        mid_height=height / 2,
-        bk_color=(0, 0, 0),
-        effect=False
-    ))
-    config.select_level_menu.add_button(Button(
-        text="  p l a y  ",
-        position=(None, None),
-        color=(255, 0, 0),
-        font=my_font,
-        scale=1,
-        event="play",
-        mid_width=width / 2,
-        mid_height=9 * unit,
-        bk_color=(0, 0, 0)
-    ))
-    config.select_level_menu.add_text(Text(
-        text="Level 1",
-        position=(None, None),
-        color=(255, 255, 255),
-        font=my_font,
-        scale=1,
-        mid_width=width / 2,
-        mid_height=height / 2
+        mid_height=11.5 * unit
     ))
 
 
@@ -400,4 +319,3 @@ def load_menu(bk):
     load_lose_menu(bk)
     load_player_menu(bk)
     load_main_menu(bk)
-    select_level_menu(bk)

@@ -1,9 +1,8 @@
 import pygame
 import random
-from sitepackge.element.effect import Bullet, Blood, TrackingBomb, Cover
-from sitepackge import config
-from sitepackge.load_game import load_resource
-from sitepackge.load_game.load_resource import image_unit as unit
+from sitepackge.effect import Bullet, Blood, TrackingBomb, Cover
+from sitepackge import config, image_init
+from sitepackge.image_init import image_unit as unit
 import time
 
 
@@ -26,7 +25,6 @@ def optimize_collide(sprite1: pygame.sprite.Sprite, sprite2: pygame.sprite.Sprit
 class Tank(pygame.sprite.Sprite):
     def __init__(self, image, initial_position, fire_space, tank_type):
         super().__init__()
-        self.tree_music = False
         self.initial_position = initial_position
         self.tank_type = tank_type
         self.rect = image.get_rect()
@@ -85,34 +83,15 @@ class Tank(pygame.sprite.Sprite):
                 self.smooth_collide(slime)
                 return True
 
-        if tank_type == 0:
-            if pygame.sprite.spritecollideany(self, config.Maps.group_lst['tree_group']):
-                if not self.tree_music:
-                    pygame.mixer.music.load(config.audio_dict['tree'])
-                    pygame.mixer.music.play()
-                    self.tree_music = True
-            else:
-                self.tree_music = False
-
         if self.tank_type == 2:
             return False
 
         for start_point in config.Maps.group_lst['start_point_group']:
             if start_point.index != 0 and pygame.sprite.collide_rect(start_point, self):
                 self.old_topleft = self.initial_position
-                while True:
-                    x = random.uniform(0, 12 * unit)
-                    y = random.uniform(0, 12 * unit)
-                    self.rect.topleft = (x, y)
-                    if pygame.sprite.spritecollideany(self, config.Maps.group_lst['river_group']) or \
-                            pygame.sprite.spritecollideany(self, config.Maps.group_lst['brick_group']) or \
-                            pygame.sprite.spritecollideany(self, config.Maps.group_lst['iron_group']) or \
-                            pygame.sprite.spritecollideany(self, config.Maps.group_lst['slime_group']) or \
-                            pygame.sprite.spritecollideany(self, config.Maps.group_lst['base_group']) or \
-                            pygame.sprite.spritecollideany(self, config.Maps.group_lst['enemy_group']) or \
-                            len(pygame.sprite.spritecollide(self, config.Maps.group_lst['player_group'], False)) == 2:
-                        continue
-
+                for player in config.Maps.group_lst['player_group']:
+                    if player != self and pygame.sprite.collide_rect(player, self):
+                        self.old_topleft = player.initial_position
                 return True
         for enemy in config.Maps.group_lst['enemy_group']:
             if tank_type == 0 or enemy != self:
@@ -126,13 +105,13 @@ class Tank(pygame.sprite.Sprite):
 
     def smooth_collide(self, other):
         if self.rect.bottom > other.rect.top > self.rect.top and self.dir == 2:
-            self.old_topleft[1] = other.rect.top - load_resource.image_unit + 5
+            self.old_topleft[1] = other.rect.top - image_init.image_unit + 5
         elif self.rect.top < other.rect.bottom < self.rect.bottom and self.dir == 0:
             self.old_topleft[1] = other.rect.bottom - 5
         elif self.rect.left < other.rect.right < self.rect.right and self.dir == 3:
             self.old_topleft[0] = other.rect.right - 5
         elif self.rect.right > other.rect.left > self.rect.left and self.dir == 1:
-            self.old_topleft[0] = other.rect.left - load_resource.image_unit + 5
+            self.old_topleft[0] = other.rect.left - image_init.image_unit + 5
 
     def smooth_collide_wall(self):
         if self.rect.top < 0:
@@ -170,8 +149,6 @@ class Tank(pygame.sprite.Sprite):
                         from_tank=self.father_tank if self.tank_type == 2 else self)
         if self.tank_type == 0:
             config.Maps.group_lst['player_bullet_group'].add(bullet)
-            pygame.mixer.music.load(config.audio_dict['fire'])
-            pygame.mixer.music.play()
         elif self.tank_type == 1:
             config.Maps.group_lst['enemy_bullet_group'].add(bullet)
         elif self.tank_type == 2:
@@ -229,10 +206,7 @@ class Tank(pygame.sprite.Sprite):
                                     pygame.sprite.spritecollideany(self, config.Maps.group_lst['brick_group']) or \
                                     pygame.sprite.spritecollideany(self, config.Maps.group_lst['iron_group']) or \
                                     pygame.sprite.spritecollideany(self, config.Maps.group_lst['slime_group']) or \
-                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['base_group']) or \
-                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['enemy_group']) or \
-                                    len(pygame.sprite.spritecollide(
-                                        self, config.Maps.group_lst['player_group'], False)) == 2:
+                                    pygame.sprite.spritecollideany(self, config.Maps.group_lst['base_group']):
                                 continue
                             for player in config.Maps.group_lst['player_group']:
                                 if player != self and pygame.sprite.collide_rect(self, player):
