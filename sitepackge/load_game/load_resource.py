@@ -250,3 +250,13 @@ def load_image():
     load_player_tank_image(sc)
     load_mini_tank_image(sc)
     load_food_gif()
+
+
+def load_audio():
+    config.audio_dict['fire'] = './audios/fire.mp3'
+    config.audio_dict['boom'] = './audios/boom.mp3'
+    config.audio_dict['button'] = './audios/button.mp3'
+    config.audio_dict['iron_break'] = './audios/iron_break.mp3'
+    config.audio_dict['lose'] = './audios/lose.mp3'
+    config.audio_dict['tree'] = './audios/tree.mp3'
+    config.audio_dict['win'] = './audios/win.mp3'
