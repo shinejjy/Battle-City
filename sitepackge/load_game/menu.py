@@ -1,5 +1,6 @@
 from __future__ import annotations
 import time
+from sitepackge import config
 
 import pygame
 
@@ -30,10 +31,13 @@ class Text:
 
 
 class Image:
-    def __init__(self, image, position, scale):
+    def __init__(self, image, position, scale, mid_width=0, mid_height=0):
         width, height = image.get_size()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-        self.position = position
+        x_pos = mid_width - int(width * scale / 2) if mid_width else position[0]
+        y_pos = mid_height - int(height * scale / 2) if mid_height else position[1]
+
+        self.position = (x_pos, y_pos)
 
     def draw(self, surface):
         surface.blit(self.image, self.position)
@@ -89,7 +93,8 @@ class DisplayButton:
 
 
 class Button:
-    def __init__(self, text, position, color, font, scale, event, mid_width=0, mid_height=0):
+    def __init__(self, text, position, color, font, scale, event, mid_width=0, mid_height=0,
+                 bk_color=(150, 150, 150, 150), effect=True):
         image = get_text_surface(text, color, font)
         width, height = image.get_size()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
@@ -100,20 +105,26 @@ class Button:
         self.rect.topleft = (x_pos, y_pos)
         self.clicked = False
         self.event = event
+        self.bk_color = bk_color
+        self.effect = effect
 
     def draw(self, surface, surface_position):
         action = False
-        bk = pygame.draw.rect(surface, (150, 150, 150, 150), self.rect)
+        bk = pygame.draw.rect(surface, self.bk_color, self.rect)
 
         # 获取鼠标位置：
         pos = pygame.mouse.get_pos()
         pos = (list(pos)[0] - surface_position[0], list(pos)[1] - surface_position[1])
 
-        pygame.draw.rect(surface, (255, 255, 255), self.rect, 3)
+        if self.effect:
+            pygame.draw.rect(surface, (255, 255, 255), self.rect, 3)
         # 鼠标划过按钮并点击
         if bk.collidepoint(pos):
-            pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
+            if self.effect:
+                pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
             if pygame.mouse.get_pressed()[0] and not self.clicked:
+                pygame.mixer.music.load(config.audio_dict['button'])
+                pygame.mixer.music.play()
                 self.clicked = True
                 action = True
 
@@ -166,3 +177,6 @@ class Menu:
 
     def add_display_button(self, display_button: DisplayButton):
         self.display_button_group.append(display_button)
+
+    def clear_text(self):
+        self.text_group = []

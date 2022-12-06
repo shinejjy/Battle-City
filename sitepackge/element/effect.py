@@ -51,6 +51,8 @@ class Bullet(pygame.sprite.Sprite):
                     enemy.now_cover_time = time.time() - enemy.cover_time
                 else:  # 如果敌方坦克无保护罩
                     if enemy.level == 0 and enemy.HP == 1:  # 如果敌方坦克等级为0且血量为1，则死亡
+                        pygame.mixer.music.load(config.audio_dict['boom'])
+                        pygame.mixer.music.play()
                         config.Maps.group_lst['enemy_group'].remove(enemy)
                         boom = Boom(image=config.image_dict['blank'][0],
                                     images=config.image_dict['boom'],
@@ -161,6 +163,9 @@ class Bullet(pygame.sprite.Sprite):
                     else:
                         config.Maps.group_lst['enemy_bullet_group'].remove(self)
                     break
+                # if self.__type__ == 0:
+                # pygame.mixer.music.load(config.audio_dict['slime'])
+                # pygame.mixer.music.play()
                 self.dirs = (self.dirs + 2) % 4
                 self.updates()
                 while pygame.sprite.collide_rect(slime, self):
@@ -241,6 +246,8 @@ class TrackingBomb(pygame.sprite.Sprite):
 
     def collide(self):
         if pygame.sprite.collide_rect(self, self.to_tank):
+            pygame.mixer.music.load(config.audio_dict['boom'])
+            pygame.mixer.music.play()
             config.Maps.group_lst['tracking_bomb_group'].remove(self)
             config.Maps.group_lst['enemy_group'].remove(self.to_tank)
             boom = Boom(image=config.image_dict['blank'][3],
