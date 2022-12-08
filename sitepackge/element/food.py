@@ -35,12 +35,17 @@ class Food(pygame.sprite.Sprite):
             tank.delay_strong(is_initial=True)
 
         if tank.tank_type == 0:
+            if self.type != 4:
+                pygame.mixer.music.load(config.audio_dict['food'])
+                pygame.mixer.music.play()
             if self.type == 0:  # save for another
                 if tank.tank_type == 0:
                     for player in config.Maps.group_lst['player_group']:
                         if not player.HP:
                             player.be_saved()
             elif self.type == 4:  # upgrade
+                pygame.mixer.music.load(config.audio_dict['upgrade'])
+                pygame.mixer.music.play()
                 tank.upgrade()
             elif self.type == 6:  # tracking_bomb
                 tank.n_bomb = min(tank.n_bomb + 1, 4)

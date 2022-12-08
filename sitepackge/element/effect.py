@@ -140,6 +140,9 @@ class Bullet(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(iron, self):
                 if self.from_tank.is_strong:
                     config.Maps.group_lst['iron_group'].remove(iron)
+                elif not self.from_tank.is_strong and self.__type__ == 0:
+                    pygame.mixer.music.load(config.audio_dict['hit-iron'])
+                    pygame.mixer.music.play()
                 if self.__type__ == 0:
                     config.Maps.group_lst['player_bullet_group'].remove(self)
                 else:

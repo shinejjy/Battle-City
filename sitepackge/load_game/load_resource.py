@@ -217,7 +217,7 @@ def load_cover_image(sc):
     print('保护罩图标加载成功')
 
 
-def load_food_gif():
+def load_gif():
     print("正在加载食物效果动图......")
     food_gif = []
     name_gif = ['save', 'aboard', 'speed', 'fire_speed', 'upgrade', 'cover', 'bomb', 'strong', 'minitank', 'heart']
@@ -229,6 +229,14 @@ def load_food_gif():
         food_gif.append(certain_gif)
     config.image_dict['food_gif'] = food_gif
     print('食物效果动图加载成功')
+    loading_gif = []
+    for index in range(121):  # 入场动画gif的每一帧图片
+        loading_gif.append(pygame.image.load(f"./image/loading_png/gif{index}.png"))
+    config.image_dict['loading_gif'] = loading_gif
+    win_gif = []
+    for index in range(26):
+        win_gif.append(pygame.image.load(f"./image/win_png/gif{index}.png"))
+    config.image_dict['win_gif'] = win_gif
 
 
 # 载入贴图总函数
@@ -249,7 +257,7 @@ def load_image():
     load_cover_image(sc)
     load_player_tank_image(sc)
     load_mini_tank_image(sc)
-    load_food_gif()
+    load_gif()
 
 
 def load_audio():
@@ -260,3 +268,7 @@ def load_audio():
     config.audio_dict['lose'] = './audios/lose.mp3'
     config.audio_dict['tree'] = './audios/tree.mp3'
     config.audio_dict['win'] = './audios/win.mp3'
+    config.audio_dict['food'] = './audios/food.mp3'
+    config.audio_dict['hit-iron'] = './audios/hit-iron.mp3'
+    config.audio_dict['loading'] = './audios/loading.mp3'
+    config.audio_dict['upgrade'] = './audios/upgrade.mp3'

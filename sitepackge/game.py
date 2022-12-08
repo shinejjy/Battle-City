@@ -1,6 +1,5 @@
 import time
 import pygame
-from pygame.locals import FULLSCREEN
 from sitepackge import config
 from sitepackge.load_game import load_resource, map_create
 from sitepackge.load_game.menu import Menu, Button, Text, Gif
@@ -37,30 +36,20 @@ class Game:
         pygame.init()  # 初始化pygame
         pygame.font.init()
         pygame.mixer.pre_init(44100, 16, 2, 4096)
-        self.now_width, self.now_height = None, None
-        self.full_width, self.full_height = None, None
         self.width, self.height = None, None
         self.Maps = None
         self.unit = load_resource.image_unit
         self.fclock = pygame.time.Clock()
         self.screen = None
         self.size = config.size
-        self.unit = load_resource.unit
-        self.is_fullscreen = False
         config.font = self.my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], 32)
         load_resource.load_image()
         load_resource.load_audio()
-        self.load_gif_images = []
-        for index in range(121):  # 入场动画gif的每一帧图片
-            self.load_gif_images.append(pygame.image.load(f"./image/loading_png/gif{index}.png"))
-        self.win_gif_images = []
-        for index in range(26):
-            self.win_gif_images.append(pygame.image.load(f"./image/win_png/gif{index}.png"))
 
     def init_game(self):
         info_object = pygame.display.Info()  # 读取display信息，获取不同电脑的分辨率大小不同，更具有兼容性
-        self.full_width, self.full_height = info_object.current_w, info_object.current_h  # 定义初始显示屏为比屏幕分辨率略小
-        self.width, self.height = self.full_width - 100, self.full_height - 100
+        full_width, full_height = info_object.current_w, info_object.current_h  # 定义初始显示屏为比屏幕分辨率略小
+        self.width, self.height = full_width - 100, full_height - 100
         if self.width // 17 > self.height // 13:  # 为了适应17：13的长宽比
             self.width, self.height = (self.height // 13) * 17, (self.height // 13) * 13
         else:
@@ -68,7 +57,6 @@ class Game:
         # self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE, 32)
         self.screen = pygame.display.set_mode((self.width, self.height))
         load_menu(self.screen)
-        self.now_width, self.now_height = self.width, self.height  # 纪录当前的屏幕大小
         pygame.display.set_caption('BattleCity')  # 设置屏幕的标题
         game_icon = pygame.image.load('image/icon.png')
         pygame.display.set_icon(game_icon)  # 设置屏幕的图标
@@ -79,9 +67,11 @@ class Game:
         self.Maps.select_level(index)
 
     def loading_movie(self):
+        pygame.mixer.music.load(config.audio_dict['loading'])
+        pygame.mixer.music.play()
         for index in range(121):
             self.screen.fill((0, 0, 0))
-            self.screen.blit(self.load_gif_images[index], ((self.now_width - 750) / 2, (self.now_height - 750) / 2))
+            self.screen.blit(config.image_dict['loading_gif'][index], ((self.width - 750) / 2, (self.height - 750) / 2))
             pygame.display.update()
             self.fclock.tick(config.fps)  # 控制刷新的时间
         self.screen.fill((0, 0, 0))
@@ -109,7 +99,7 @@ class Game:
             pre_screen.blit(now_screen, (0, 0))
             pre_screen.blit(gameovers, (x * unit, y * unit))
             self.screen.fill((0, 0, 0))
-            self.screen.blit(pre_screen, ((self.now_width - width) / 2, (self.now_height - height) / 2))
+            self.screen.blit(pre_screen, ((self.width - width) / 2, (self.height - height) / 2))
             pygame.display.update()
             self.fclock.tick(60)  # 控制刷新的时间
             x += dx
@@ -136,7 +126,7 @@ class Game:
                 pygame.quit()
                 exit(0)
             self.screen.fill((0, 0, 0))
-            self.screen.blit(pre_screen, ((self.now_width - width) / 2, (self.now_height - height) / 2))
+            self.screen.blit(pre_screen, ((self.width - width) / 2, (self.height - height) / 2))
             pygame.display.update()
             self.fclock.tick(60)  # 控制刷新的时间
 
@@ -144,8 +134,8 @@ class Game:
         pygame.mixer.music.load(config.audio_dict['win'])
         pygame.mixer.music.play()
         index = 0
-        unit = self.now_width / 17
-        width = self.win_gif_images[0].get_width()
+        unit = self.width / 17
+        width = config.image_dict['win_gif'][0].get_width()
         win_stage_menu = Menu()
         win_stage_menu.add_button(Button(
             text='Next Stage',
@@ -163,43 +153,43 @@ class Game:
             scale=2,
             event='quit'
         ))
-        win_stage_menu.add_text(Text('Win', (255, 0, 0), self.my_font, (self.now_width / 6, unit * 1), 3))
-        win_stage_menu.add_text(Text('Game', (255, 0, 0), self.my_font, (self.now_width / 7 * 5, unit * 1), 3))
-        win_stage_menu.add_text(Text('Player', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 5), 1.5))
-        win_stage_menu.add_text(Text('Score', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 7), 1.5))
-        win_stage_menu.add_text(Text('Kill Enemy', (255, 255, 255), self.my_font, (self.now_width / 6, unit * 9), 1.5))
-        win_stage_menu.add_text(Text('P1', (127, 127, 127), self.my_font, (self.now_width / 2, unit * 5), 1.5))
+        win_stage_menu.add_text(Text('Win', (255, 0, 0), self.my_font, (self.width / 6, unit * 1), 3))
+        win_stage_menu.add_text(Text('Game', (255, 0, 0), self.my_font, (self.width / 7 * 5, unit * 1), 3))
+        win_stage_menu.add_text(Text('Player', (255, 255, 255), self.my_font, (self.width / 6, unit * 5), 1.5))
+        win_stage_menu.add_text(Text('Score', (255, 255, 255), self.my_font, (self.width / 6, unit * 7), 1.5))
+        win_stage_menu.add_text(Text('Kill Enemy', (255, 255, 255), self.my_font, (self.width / 6, unit * 9), 1.5))
+        win_stage_menu.add_text(Text('P1', (127, 127, 127), self.my_font, (self.width / 2, unit * 5), 1.5))
         win_stage_menu.add_text(Text(
             str(self.Maps.group_lst['player_group'].sprites()[0].score),
             (127, 127, 127),
             self.my_font,
-            (self.now_width / 2, unit * 7),
+            (self.width / 2, unit * 7),
             1.5
         ))
         win_stage_menu.add_text(Text(
             str(self.Maps.group_lst['player_group'].sprites()[0].enemy_kill),
             (127, 127, 127),
             self.my_font,
-            (self.now_width / 2, unit * 9),
+            (self.width / 2, unit * 9),
             1.5
         ))
         if len(self.Maps.group_lst['player_group']) == 2:
-            win_stage_menu.add_text(Text('P2', (0, 168, 69), self.my_font, (self.now_width / 7 * 5, unit * 5), 1.5))
+            win_stage_menu.add_text(Text('P2', (0, 168, 69), self.my_font, (self.width / 7 * 5, unit * 5), 1.5))
             win_stage_menu.add_text(Text(
                 str(self.Maps.group_lst['player_group'].sprites()[1].score),
                 (0, 168, 69),
                 self.my_font,
-                (self.now_width / 7 * 5, unit * 7),
+                (self.width / 7 * 5, unit * 7),
                 1.5
             ))
             win_stage_menu.add_text(Text(
                 str(self.Maps.group_lst['player_group'].sprites()[1].enemy_kill),
                 (0, 168, 69),
                 self.my_font,
-                (self.now_width / 7 * 5, unit * 9),
+                (self.width / 7 * 5, unit * 9),
                 1.5
             ))
-        win_stage_menu.add_gif(Gif(self.win_gif_images, ((self.now_width - width) / 2, unit * 0.5), 1))
+        win_stage_menu.add_gif(Gif(config.image_dict['win_gif'], ((self.width - width) / 2, unit * 0.5), 1))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -413,22 +403,7 @@ class Game:
                     if event.type == pygame.QUIT:
                         sys.exit()
                     elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_F11:
-                            if not self.is_fullscreen:
-                                self.screen = pygame.display.set_mode(
-                                    (self.full_width, self.full_height),
-                                    FULLSCREEN, 32)
-                                self.now_width, self.now_height = self.full_width, self.full_height
-                                self.is_fullscreen = True
-                            else:
-                                # self.screen = pygame.display.set_mode((self.width, self.height),
-                                #                                       RESIZABLE, 32)
-                                # self.screen = pygame.display.set_mode((self.width, self.height),
-                                #                                       RESIZABLE, 32)
-                                self.screen = pygame.display.set_mode((self.width, self.height))
-                                self.now_width, self.now_height = self.width, self.height
-                                self.is_fullscreen = False
-                        elif event.key == pygame.K_ESCAPE:
+                        if event.key == pygame.K_ESCAPE:
                             if self.esc_menu():
                                 return
                         elif event.key == pygame.K_SPACE:
@@ -458,11 +433,11 @@ class Game:
         clear(self.Maps.screen)
         pre_screen, is_win = self.Maps.show()
         show_line(pre_screen)
-        # self.now_width, self.now_height = self.screen.get_size()
-        pre_screen = resize(pre_screen, self.now_width, self.now_height)
+        # self.width, self.height = self.screen.get_size()
+        pre_screen = resize(pre_screen, self.width, self.height)
         width, height = pre_screen.get_size()
         self.screen.fill((0, 0, 0))
-        self.screen.blit(pre_screen, ((self.now_width - width) / 2, (self.now_height - height) / 2))
+        self.screen.blit(pre_screen, ((self.width - width) / 2, (self.height - height) / 2))
 
         pygame.display.update()
         self.fclock.tick(config.fps)  # 控制刷新的时间
@@ -478,17 +453,6 @@ class Game:
                     if event.key == pygame.K_SPACE:
                         self.Maps.food_time += time.time() - pause_time
                         return
-                    elif event.key == pygame.K_F11:
-                        if not self.is_fullscreen:
-                            self.screen = pygame.display.set_mode(
-                                (self.full_width, self.full_height),
-                                FULLSCREEN, 32)
-                            self.now_width, self.now_height = self.full_width, self.full_height
-                            self.is_fullscreen = True
-                        else:
-                            self.screen = pygame.display.set_mode((self.width, self.height))
-                            self.now_width, self.now_height = self.width, self.height
-                            self.is_fullscreen = False
                     elif event.key == pygame.K_ESCAPE:
                         sys.exit()
 

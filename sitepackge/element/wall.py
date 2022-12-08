@@ -10,62 +10,30 @@ class Wall(pygame.sprite.Sprite):
         self.rect.topleft = initial_position
 
 
-class River(Wall):
-    def __init__(self, image, images, initial_position):
+class StaticWall(Wall):
+    def __init__(self, image, initial_position):
+        super().__init__(image, initial_position)
+
+
+class DynamicWall(Wall):
+    def __init__(self, image, images, initial_position, space_time):
         super().__init__(image, initial_position)
         self.index = 0
         self.update_time = time.time() - 0.5
         self.image = images[self.index]
         self.images = images
+        self.len = len(images)
+        self.space_time = space_time
 
     def updates(self):
         now = time.time()
-        if now - self.update_time > 0.5:
+        if now - self.update_time > self.space_time:
             self.update_time = now
-            self.index = 1 - self.index
+            self.index = (self.index + 1) % self.len
             self.image = self.images[self.index]
-
-
-class Brick(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Tree(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Base(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Ice(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Iron(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Slime(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
-class Startpoint(Wall):
-    def __init__(self, image, images, initial_position):
-        super().__init__(image, initial_position)
-        self.images = images
-        self.index = 0
-        self.image = images[self.index]
-
-    def updates(self):
-        self.index = (self.index + 1) % 5
-        self.image = self.images[self.index]
-        if self.index == 0:
-            return True
-        return False
+            if self.index == 0:
+                return 'new'
+            else:
+                return True
+        else:
+            return False

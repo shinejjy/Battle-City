@@ -104,6 +104,7 @@ class Tank(pygame.sprite.Sprite):
                     x = random.uniform(0, 12 * unit)
                     y = random.uniform(0, 12 * unit)
                     self.rect.topleft = (x, y)
+
                     if pygame.sprite.spritecollideany(self, config.Maps.group_lst['river_group']) or \
                             pygame.sprite.spritecollideany(self, config.Maps.group_lst['brick_group']) or \
                             pygame.sprite.spritecollideany(self, config.Maps.group_lst['iron_group']) or \
@@ -112,6 +113,7 @@ class Tank(pygame.sprite.Sprite):
                             pygame.sprite.spritecollideany(self, config.Maps.group_lst['enemy_group']) or \
                             len(pygame.sprite.spritecollide(self, config.Maps.group_lst['player_group'], False)) == 2:
                         continue
+                    break
 
                 return True
         for enemy in config.Maps.group_lst['enemy_group']:

@@ -1,5 +1,5 @@
 import pygame
-from sitepackge.element.wall import Tree, Brick, River, Base, Startpoint, Iron, Ice, Slime
+from sitepackge.element.wall import StaticWall, DynamicWall
 from sitepackge.element.food import Food
 from sitepackge.load_game.load_resource import image_unit as unit
 from sitepackge.element.tank import Player, Enemy
@@ -47,29 +47,30 @@ def load_map_group(preMapLst, image_dict, map_index):
                 if 20 in ele:
                     for i, sub_ele in enumerate(ele):
                         if sub_ele == 20:
-                            brick_group.add(Brick(image_dict['brick'][0],
-                                                  (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
+                            brick_group.add(StaticWall(image_dict['brick'][0],
+                                                       (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
                 elif 24 in ele:
                     for i, sub_ele in enumerate(ele):
                         if sub_ele == 24:
-                            iron_group.add(Iron(image_dict['iron'][0],
-                                                (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
+                            iron_group.add(StaticWall(image_dict['iron'][0],
+                                                      (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
 
             else:
                 if ele == 21:
-                    river_group.add(River(image_dict['blank'][0], image_dict['river'], (x * unit, y * unit)))
+                    river_group.add(DynamicWall(image_dict['blank'][0], image_dict['river'], (x * unit, y * unit), 0.5))
                 elif ele == 22:
-                    ice_group.add(Ice(image_dict['ice'][0], (x * unit, y * unit)))
+                    ice_group.add(StaticWall(image_dict['ice'][0], (x * unit, y * unit)))
                 elif ele == 23:
-                    tree_group.add(Tree(image_dict['tree'][0], (x * unit, y * unit)))
+                    tree_group.add(StaticWall(image_dict['tree'][0], (x * unit, y * unit)))
                 elif ele == 25:
-                    slime_group.add(Slime(image_dict['slime'][0], (x * unit, y * unit)))
+                    slime_group.add(StaticWall(image_dict['slime'][0], (x * unit, y * unit)))
                 elif ele == 30:
-                    base_group.add(Base(image_dict['base'][0], (x * unit, y * unit)))
+                    base_group.add(StaticWall(image_dict['base'][0], (x * unit, y * unit)))
                 elif ele == 31:
-                    start_point_group.add(Startpoint(image_dict['blank'][0],
-                                                     [image_dict['blank'][0]] + image_dict['start_point'],
-                                                     (x * unit, y * unit)))
+                    start_point_group.add(DynamicWall(image_dict['blank'][0],
+                                                      [image_dict['blank'][0]] + image_dict['start_point'],
+                                                      (x * unit, y * unit),
+                                                      0.2))
                 elif ele == 1:
                     player_group.add(Player(image=image_dict['blank'][0],
                                             images=image_dict['player1'],
@@ -107,22 +108,22 @@ def load_map_group(preMapLst, image_dict, map_index):
 class Map:
     def __init__(self, screen):
         self.map_index = 0
-        self.pre_enemy_index = 0
+        self.enemy_index = 0
         self.end_enemy_index = None
         self.end_map_index = len(config.Map_data)
         self.group_lst = None
         self.screen = screen
         self.born_time = time.time() - 0.2
         self.food_time = time.time()
-        self.__during_born__ = False
+        self.during_born = False
 
     def select_level(self, index):
         self.map_index = index
-        self.pre_enemy_index = 0
+        self.enemy_index = 0
         self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
         self.end_enemy_index = len(config.pre_enemy[self.map_index])
 
-    def __update__(self):
+    def update(self):
         for river in self.group_lst['river_group']:
             river.updates()
         for boom in self.group_lst['boom_group']:
@@ -138,12 +139,12 @@ class Map:
 
     def show(self):
         is_win = False
-        self.__update__()
+        self.update()
         self.food_born()
         self.prompt_show()
 
         if len(self.group_lst['enemy_group']) == 0:
-            if self.pre_enemy_index == self.end_enemy_index:
+            if self.enemy_index == self.end_enemy_index:
                 is_win = True
             else:
                 self.enemy_born()
@@ -156,19 +157,19 @@ class Map:
         if self.map_index == self.end_map_index:
             return True
         self.map_index += 1
-        self.pre_enemy_index = 0
+        self.enemy_index = 0
         self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
         self.end_enemy_index = len(config.pre_enemy[self.map_index])
         self.born_time = time.time() - 0.2
         self.food_time = time.time()
-        self.__during_born__ = False
+        self.during_born = False
 
     def replay_stage(self):
         self.group_lst = load_map_group(config.Map_data, config.image_dict, self.map_index)
-        self.pre_enemy_index = 0
+        self.enemy_index = 0
         self.born_time = time.time() - 0.2
         self.food_time = time.time()
-        self.__during_born__ = False
+        self.during_born = False
 
     def enemy_born(self):
         f = True
@@ -177,17 +178,20 @@ class Map:
             return
         self.born_time = now
         for start_point in self.group_lst['start_point_group']:
-            if not start_point.updates():  # 更新start_point的贴图，若动画结束则返回True
+            event = start_point.updates()  # 更新start_point的贴图，若动画结束则返回True
+            if not event:
+                return
+            elif event != 'new':
                 f = False
         if f:  # 若所有敌方出生点的动画都结束了，则f为True
-            for enemy, start_point in zip(config.pre_enemy[self.map_index][self.pre_enemy_index],
+            for enemy, start_point in zip(config.pre_enemy[self.map_index][self.enemy_index],
                                           self.group_lst['start_point_group']):
                 self.group_lst['enemy_group'].add(Enemy(image=config.image_dict['blank'][0],
                                                         all_images=config.image_dict[enemy['enemy_type']],
                                                         initial_position=start_point.rect.topleft,
                                                         level=enemy['level'],
                                                         enemy_type=enemy['enemy_type']))
-            self.pre_enemy_index += 1
+            self.enemy_index += 1
 
     def food_born(self):
         now = time.time()
@@ -215,7 +219,7 @@ class Map:
         self.screen.blit(menu.get_text_surface(f"Level {self.map_index + 1}", (0, 0, 0), my_font),
                          (10 + unit * 13, 10))
         n_enemy = \
-            (len(config.pre_enemy[self.map_index]) - self.pre_enemy_index) * \
+            (len(config.pre_enemy[self.map_index]) - self.enemy_index) * \
             len(config.pre_enemy[self.map_index][0]) + len(self.group_lst['enemy_group'])
         for i in range(n_enemy):
             self.screen.blit(config.image_dict['enemy_icon'][0], (10 + unit * 13 + 40 * (i % 6), 64 + 40 * (i // 6)))
