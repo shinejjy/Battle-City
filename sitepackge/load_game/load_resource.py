@@ -272,3 +272,19 @@ def load_audio():
     config.audio_dict['hit-iron'] = './audios/hit-iron.mp3'
     config.audio_dict['loading'] = './audios/loading.mp3'
     config.audio_dict['upgrade'] = './audios/upgrade.mp3'
+
+
+def load_map_data():
+    with open('./map_data.lvl', mode='r', encoding='utf-8') as f:
+        map_data = []
+        ct = f.readlines()
+        for i in range(11):
+            stage = []
+            for j in range(13):
+                line = ct[i * 14 + j].replace('\n', ''). \
+                    replace('oooo', '[20, 20, 20, 20]'). \
+                    replace('xxxx', '[24, 24, 24, 24]'). \
+                    replace('multiplayer', str(config.multiplayer))
+                stage.append(eval(line))
+            map_data.append(stage)
+    return map_data

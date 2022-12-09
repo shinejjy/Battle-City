@@ -476,12 +476,12 @@ class Game:
                 self.help_menu(self.screen, menu_image)
             elif event == 'single':
                 config.multiplayer = 0
-                config.update_map()
+                config.Map_data = load_resource.load_map_data()
                 self.select_level_menu(self.screen)
                 pygame.time.delay(100)
             elif event == 'multi':
                 config.multiplayer = 2
-                config.update_map()
+                config.Map_data = load_resource.load_map_data()
                 self.select_level_menu(self.screen)
                 pygame.time.delay(100)
             pygame.display.update()
