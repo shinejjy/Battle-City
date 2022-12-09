@@ -22,7 +22,7 @@ class Food(pygame.sprite.Sprite):
             self.index = 1 - self.index
             self.image = self.images[self.index]
 
-    def be_eaten(self, tank):
+    def effect(self, tank):
         if self.type == 1:  # board
             tank.delay_board(is_initial=True)
         elif self.type == 2:  # faster

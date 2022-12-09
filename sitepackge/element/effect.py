@@ -23,24 +23,24 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.speed = [-speed, 0]
         # __type__ 0 表示己方 1 表示敌方
-        self.__type__ = types
+        self.type = types
         self.from_tank = from_tank  # 表示tank来源
 
     def move(self):
         self.rect = self.rect.move(self.speed)
-        self.__kills__()
-        if self.__type__ == 0 or self.__type__ == 2:
+        self.kills()
+        if self.type == 0 or self.type == 2:
             self.hit_enemy_tank()
             self.hit_enemy_bullet()
-        elif self.__type__ == 1:
+        elif self.type == 1:
             self.hit_player_tank()
             self.hit_mini_tank()
             self.hit_player_or_mini_tank_bullet()
-        if self.__type__ == 0 or self.__type__ == 1:
-            self.hit_brick()
+        if self.type == 0 or self.type == 1:
+            self.hit_wall()
             if self.game_over():
                 return True
-        elif self.__type__ == 2:
+        elif self.type == 2:
             self.mini_hit_wall()
 
     def hit_enemy_tank(self):
@@ -124,12 +124,12 @@ class Bullet(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(base, self):
                 return True
 
-    def hit_brick(self):
+    def hit_wall(self):
         f = False
         for brick in config.Maps.group_lst['brick_group']:
             if pygame.sprite.collide_rect(brick, self):
                 config.Maps.group_lst['brick_group'].remove(brick)
-                if self.__type__ == 0:
+                if self.type == 0:
                     config.Maps.group_lst['player_bullet_group'].remove(self)
                 else:
                     config.Maps.group_lst['enemy_bullet_group'].remove(self)
@@ -140,10 +140,10 @@ class Bullet(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(iron, self):
                 if self.from_tank.is_strong:
                     config.Maps.group_lst['iron_group'].remove(iron)
-                elif not self.from_tank.is_strong and self.__type__ == 0:
+                elif not self.from_tank.is_strong and self.type == 0:
                     pygame.mixer.music.load(config.audio_dict['hit-iron'])
                     pygame.mixer.music.play()
-                if self.__type__ == 0:
+                if self.type == 0:
                     config.Maps.group_lst['player_bullet_group'].remove(self)
                 else:
                     config.Maps.group_lst['enemy_bullet_group'].remove(self)
@@ -153,7 +153,7 @@ class Bullet(pygame.sprite.Sprite):
         for slime in config.Maps.group_lst['slime_group']:
             if pygame.sprite.collide_rect(slime, self):
                 if self.from_tank.is_strong:
-                    if self.__type__ == 0:
+                    if self.type == 0:
                         config.Maps.group_lst['player_bullet_group'].remove(self)
                     else:
                         config.Maps.group_lst['enemy_bullet_group'].remove(self)
@@ -161,12 +161,12 @@ class Bullet(pygame.sprite.Sprite):
                     f = True
                     break
                 if self.rebounds == 0:
-                    if self.__type__ == 0:
+                    if self.type == 0:
                         config.Maps.group_lst['player_bullet_group'].remove(self)
                     else:
                         config.Maps.group_lst['enemy_bullet_group'].remove(self)
                     break
-                # if self.__type__ == 0:
+                # if self.type == 0:
                 # pygame.mixer.music.load(config.audio_dict['slime'])
                 # pygame.mixer.music.play()
                 self.dirs = (self.dirs + 2) % 4
@@ -195,16 +195,16 @@ class Bullet(pygame.sprite.Sprite):
                 del self
                 return
 
-    def __kills__(self):
+    def kills(self):
         if self.rect.left < 0 \
                 or self.rect.right > config.width \
                 or self.rect.top < 0 \
                 or self.rect.bottom > config.height:
-            if self.__type__ == 0:
+            if self.type == 0:
                 config.Maps.group_lst['player_bullet_group'].remove(self)
-            elif self.__type__ == 1:
+            elif self.type == 1:
                 config.Maps.group_lst['enemy_bullet_group'].remove(self)
-            elif self.__type__ == 2:
+            elif self.type == 2:
                 config.Maps.group_lst['mini_tank_bullet_group'].remove(self)
             del self
 
@@ -222,12 +222,12 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class TrackingBomb(pygame.sprite.Sprite):
-    def __init__(self, image, image1, initial_position, to_tank, from_tank):
+    def __init__(self, image, initial_image, initial_position, to_tank, from_tank):
         super().__init__()
         self.rect = image.get_rect()
         self.rect.center = initial_position
-        self.image = image1
-        self.image1 = image1
+        self.image = initial_image
+        self.initial_image = initial_image
         self.to_tank = to_tank
         self.from_tank = from_tank
         self.move()
@@ -244,7 +244,7 @@ class TrackingBomb(pygame.sprite.Sprite):
             angle += 180
         elif cos_a < 0 < angle:
             angle -= 180
-        self.image = pygame.transform.rotate(self.image1, angle)
+        self.image = pygame.transform.rotate(self.initial_image, angle)
         self.rect = self.image.get_rect(center=(x1 + 6 * cos_a, y1 - 18 * sin_a))
 
     def collide(self):
@@ -320,11 +320,11 @@ class Blood(pygame.sprite.Sprite):
         self.rect = green.blit(red, (HP / initial_HP * 88, 0))
         self.rect.topleft = initial_position
         self.image = green
-        self.live = 8
+        self.live_time = 8
 
     def updates(self):
-        if self.live > 0:
-            self.live -= 1
+        if self.live_time > 0:
+            self.live_time -= 1
         else:
             config.Maps.group_lst['blood_group'].remove(self)
             del self

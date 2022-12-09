@@ -1,5 +1,5 @@
 import pygame
-from sitepackge.element.wall import StaticWall, DynamicWall
+from sitepackge.element.wall import Wall, DynamicWall
 from sitepackge.element.food import Food
 from sitepackge.load_game.load_resource import image_unit as unit
 from sitepackge.element.tank import Player, Enemy
@@ -47,25 +47,25 @@ def load_map_group(preMapLst, image_dict, map_index):
                 if 20 in ele:
                     for i, sub_ele in enumerate(ele):
                         if sub_ele == 20:
-                            brick_group.add(StaticWall(image_dict['brick'][0],
-                                                       (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
+                            brick_group.add(Wall(image_dict['brick'][0],
+                                                 (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
                 elif 24 in ele:
                     for i, sub_ele in enumerate(ele):
                         if sub_ele == 24:
-                            iron_group.add(StaticWall(image_dict['iron'][0],
-                                                      (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
+                            iron_group.add(Wall(image_dict['iron'][0],
+                                                (x * unit + (i % 2) * unit / 2, y * unit + (i // 2) * unit / 2)))
 
             else:
                 if ele == 21:
                     river_group.add(DynamicWall(image_dict['blank'][0], image_dict['river'], (x * unit, y * unit), 0.5))
                 elif ele == 22:
-                    ice_group.add(StaticWall(image_dict['ice'][0], (x * unit, y * unit)))
+                    ice_group.add(Wall(image_dict['ice'][0], (x * unit, y * unit)))
                 elif ele == 23:
-                    tree_group.add(StaticWall(image_dict['tree'][0], (x * unit, y * unit)))
+                    tree_group.add(Wall(image_dict['tree'][0], (x * unit, y * unit)))
                 elif ele == 25:
-                    slime_group.add(StaticWall(image_dict['slime'][0], (x * unit, y * unit)))
+                    slime_group.add(Wall(image_dict['slime'][0], (x * unit, y * unit)))
                 elif ele == 30:
-                    base_group.add(StaticWall(image_dict['base'][0], (x * unit, y * unit)))
+                    base_group.add(Wall(image_dict['base'][0], (x * unit, y * unit)))
                 elif ele == 31:
                     start_point_group.add(DynamicWall(image_dict['blank'][0],
                                                       [image_dict['blank'][0]] + image_dict['start_point'],

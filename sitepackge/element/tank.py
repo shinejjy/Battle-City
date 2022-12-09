@@ -26,7 +26,6 @@ def optimize_collide(sprite1: pygame.sprite.Sprite, sprite2: pygame.sprite.Sprit
 class Tank(pygame.sprite.Sprite):
     def __init__(self, image, initial_position, fire_space, tank_type):
         super().__init__()
-        self.tree_music = False
         self.initial_position = initial_position
         self.tank_type = tank_type
         self.rect = image.get_rect()
@@ -66,7 +65,7 @@ class Tank(pygame.sprite.Sprite):
                 break
             else:
                 self.ice_faster = 0
-        if self.smooth_collide_wall():
+        if self.reset_collide_wall():
             return True
         for brick in config.Maps.group_lst['brick_group']:
             if optimize_collide(self, brick):
@@ -136,7 +135,7 @@ class Tank(pygame.sprite.Sprite):
         elif self.rect.right > other.rect.left > self.rect.left and self.dir == 1:
             self.old_topleft[0] = other.rect.left - load_resource.image_unit + 5
 
-    def smooth_collide_wall(self):
+    def reset_collide_wall(self):
         if self.rect.top < 0:
             self.old_topleft[1] = 0
             return True
@@ -155,7 +154,7 @@ class Tank(pygame.sprite.Sprite):
         for food in config.Maps.group_lst['food_group']:
             if pygame.sprite.collide_rect(food, self):
                 config.Maps.group_lst['food_group'].remove(food)
-                food.be_eaten(self)
+                food.effect(self)
                 del food
 
     def __fire__(self):
@@ -295,6 +294,8 @@ class Player(Tank):
         self.invincible_time = 999999999999999999 if config.command else 3
         self.is_invincible = False
         self.now_invincible_time = 0
+
+        self.tree_music = False
 
     def move(self):
         if self.HP == 0:

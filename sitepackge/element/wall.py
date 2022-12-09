@@ -10,11 +10,6 @@ class Wall(pygame.sprite.Sprite):
         self.rect.topleft = initial_position
 
 
-class StaticWall(Wall):
-    def __init__(self, image, initial_position):
-        super().__init__(image, initial_position)
-
-
 class DynamicWall(Wall):
     def __init__(self, image, images, initial_position, space_time):
         super().__init__(image, initial_position)

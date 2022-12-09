@@ -180,3 +180,22 @@ class Menu:
 
     def clear_text(self):
         self.text_group = []
+
+    def clear_image(self):
+        self.image_group = []
+
+    def clear_gif(self):
+        self.gif_group = []
+
+    def clear_button(self):
+        self.button_group = []
+
+    def clear_display_button(self):
+        self.display_button_group = []
+
+    def clear_all(self):
+        self.text_group = []
+        self.image_group = []
+        self.gif_group = []
+        self.button_group = []
+        self.display_button_group = []
