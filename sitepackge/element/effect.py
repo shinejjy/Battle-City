@@ -160,6 +160,9 @@ class Bullet(pygame.sprite.Sprite):
                     config.Maps.group_lst['slime_group'].remove(slime)
                     f = True
                     break
+                elif not self.from_tank.is_strong and self.type == 0:
+                    pygame.mixer.music.load(config.audio_dict['slime'])
+                    pygame.mixer.music.play()
                 if self.rebounds == 0:
                     if self.type == 0:
                         config.Maps.group_lst['player_bullet_group'].remove(self)

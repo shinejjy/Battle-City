@@ -272,6 +272,7 @@ def load_audio():
     config.audio_dict['hit-iron'] = './audios/hit-iron.mp3'
     config.audio_dict['loading'] = './audios/loading.mp3'
     config.audio_dict['upgrade'] = './audios/upgrade.mp3'
+    config.audio_dict['slime'] = './audios/slime.mp3'
 
 
 def load_map_data():
