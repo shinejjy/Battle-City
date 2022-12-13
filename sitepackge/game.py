@@ -48,7 +48,7 @@ class Game:
 
     def init_game(self):
         info_object = pygame.display.Info()  # 读取display信息，获取不同电脑的分辨率大小不同，更具有兼容性
-        full_width, full_height = info_object.current_w, info_object.current_h  # 定义初始显示屏为比屏幕分辨率略小
+        full_width, full_height = info_object.current_w, info_object.current_h  # 定义初始显示屏为比屏幕分辨率
         self.width, self.height = full_width - 100, full_height - 100
         if self.width // 17 > self.height // 13:  # 为了适应17：13的长宽比
             self.width, self.height = (self.height // 13) * 17, (self.height // 13) * 13
@@ -230,6 +230,16 @@ class Game:
         unit = width / 17
         my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit))
         index = 1
+        config.select_level_menu.clear_text()
+        config.select_level_menu.add_text(Text(
+            text=f"Level {index}",
+            position=(None, None),
+            color=(255, 255, 255),
+            font=my_font,
+            scale=1,
+            mid_width=width / 2,
+            mid_height=height / 2
+        ))
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -271,8 +281,8 @@ class Game:
                 ))
             elif event == 'play':
                 self.init_map(index - 1)
-                if self.run_game():
-                    return
+                self.run_game()
+                return
             pygame.display.update()
             self.fclock.tick(20)  # 控制刷新的时间
 
