@@ -261,6 +261,7 @@ def load_image():
 
 
 def load_audio():
+    print("正在加载声音资源......")
     config.audio_dict['fire'] = './audios/fire.mp3'
     config.audio_dict['boom'] = './audios/boom.mp3'
     config.audio_dict['button'] = './audios/button.mp3'
@@ -273,6 +274,8 @@ def load_audio():
     config.audio_dict['loading'] = './audios/loading.mp3'
     config.audio_dict['upgrade'] = './audios/upgrade.mp3'
     config.audio_dict['slime'] = './audios/slime.mp3'
+    config.audio_dict['move_speed'] = './audios/move_speed.mp3'
+    print("加载声音资源成功")
 
 
 def load_map_data():

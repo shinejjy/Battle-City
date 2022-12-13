@@ -10,10 +10,32 @@ import random
 
 
 # food 0复活队友 1渡河 2加移速 3加射速 4升级 5保护罩 6核弹 7子弹增强 8 生成小坦克 9加血
-# def create_food_type():
-#     seed = random.randint(0, 100)
-#     random.seed(seed)
-#     a = random.randint(0, 100)
+# 5 10 15 15 15 10 10 5 5 10
+# 5 15 30 45 60 70 80 85 90 100
+def food_type():
+    seed = random.randint(0, 100)
+    random.seed(seed)
+    food_type_rd = random.randint(0, 100)
+    if food_type_rd < 5:
+        return 0
+    elif food_type_rd < 15:
+        return 1
+    elif food_type_rd < 30:
+        return 2
+    elif food_type_rd < 45:
+        return 3
+    elif food_type_rd < 60:
+        return 4
+    elif food_type_rd < 70:
+        return 5
+    elif food_type_rd < 80:
+        return 6
+    elif food_type_rd < 85:
+        return 7
+    elif food_type_rd < 90:
+        return 8
+    else:
+        return 9
 
 
 # 通过预先设置的地图数据和图像字典，创建一个存有关卡map_index的Group
@@ -195,12 +217,12 @@ class Map:
 
     def food_born(self):
         now = time.time()
-        if now - self.food_time > 15:
+        if now - self.food_time > 13:
             self.food_time = now
             while True:
                 top = random.randint(0, 12 * unit)
                 left = random.randint(0, 12 * unit)
-                types = random.randint(0, 9)
+                types = food_type()
                 food = Food(images=[config.image_dict['blank'][0],
                                     config.image_dict['food'][types]],
                             initial_position=(left, top),

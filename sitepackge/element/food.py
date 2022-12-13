@@ -35,8 +35,11 @@ class Food(pygame.sprite.Sprite):
             tank.delay_strong(is_initial=True)
 
         if tank.tank_type == 0:
-            if self.type != 4:
+            if self.type != 4 and self.type != 2:
                 pygame.mixer.music.load(config.audio_dict['food'])
+                pygame.mixer.music.play()
+            elif self.type == 2:
+                pygame.mixer.music.load(config.audio_dict['move_speed'])
                 pygame.mixer.music.play()
             if self.type == 0:  # save for another
                 if tank.tank_type == 0:

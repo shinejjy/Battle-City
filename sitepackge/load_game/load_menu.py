@@ -4,6 +4,7 @@ from sitepackge.load_game.menu import Image, Text, Gif, DisplayButton, Button, M
 
 
 def load_enemy_menu(bk):
+    print("正在加载敌人介绍界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -44,9 +45,11 @@ def load_enemy_menu(bk):
                 scale=1
             )
         ))
+    print("加载敌人介绍界面资源成功")
 
 
 def load_food_menu(bk):
+    print("正在加载食物介绍界面资源......")
     # name_gif = ['save', 'aboard', 'speed', 'fire_speed', 'upgrade', 'cover', 'bomb', 'strong', 'minitank', 'heart']
     text_lst = ["Save for another player", "Move on the river for 10 second", "Movement speed increase for 3 second",
                 "Fire speed increase for 10 second", "Upgrade (For further particulars, please HELP->Player)",
@@ -83,9 +86,11 @@ def load_food_menu(bk):
                     )
                 ]
             ))
+    print("加载食物介绍界面资源成功")
 
 
 def load_help_menu(bk):
+    print("正在加载帮助界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -117,9 +122,11 @@ def load_help_menu(bk):
         event='enemy',
         mid_width=width / 2
     ))
+    print("加载帮助界面资源成功")
 
 
 def load_player_menu(bk):
+    print("正在加载玩家介绍界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -178,9 +185,11 @@ def load_player_menu(bk):
             mid_width=(4.5 + (index % 2) * 8) * unit,
             mid_height=10.5 * unit
         ))
+    print("加载玩家介绍界面资源成功")
 
 
 def load_esc_menu(bk):
+    print("正在加载ESC界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -230,9 +239,11 @@ def load_esc_menu(bk):
         event='exit to desktop',
         mid_width=width / 2
     ))
+    print("加载ESC界面资源成功")
 
 
 def load_lose_menu(bk):
+    print("正在加载失败界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -253,9 +264,11 @@ def load_lose_menu(bk):
         scale=3,
         event='quit'
     ))
+    print("加载失败界面资源成功")
 
 
 def load_main_menu(bk):
+    print("正在加载主菜单界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit / 2))
@@ -339,9 +352,11 @@ def load_main_menu(bk):
         mid_width=width / 2,
         mid_height=11 * unit
     ))
+    print("加载主菜单界面资源成功")
 
 
 def select_level_menu(bk):
+    print("正在加载选择关卡界面资源......")
     width, height = bk.get_size()
     unit = width / 17
     my_font = pygame.font.SysFont(['方正粗黑宋简体', 'microsoftsansserif'], int(unit))
@@ -390,9 +405,11 @@ def select_level_menu(bk):
         mid_width=width / 2,
         mid_height=height / 2
     ))
+    print("加载选择关卡界面资源成功")
 
 
 def load_menu(bk):
+    print("正在加载菜单资源......")
     load_enemy_menu(bk)
     load_help_menu(bk)
     load_food_menu(bk)
@@ -401,3 +418,4 @@ def load_menu(bk):
     load_player_menu(bk)
     load_main_menu(bk)
     select_level_menu(bk)
+    print("加载菜单资源成功")
