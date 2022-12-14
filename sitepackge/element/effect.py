@@ -1,7 +1,9 @@
-import pygame
-from sitepackge import config
-import time
 import math
+import time
+
+import pygame
+
+from sitepackge import config
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -51,8 +53,7 @@ class Bullet(pygame.sprite.Sprite):
                     enemy.now_cover_time = time.time() - enemy.cover_time
                 else:  # 如果敌方坦克无保护罩
                     if enemy.level == 0 and enemy.HP == 1:  # 如果敌方坦克等级为0且血量为1，则死亡
-                        pygame.mixer.music.load(config.audio_dict['boom'])
-                        pygame.mixer.music.play()
+                        config.audio_dict['boom'].play()
                         config.Maps.group_lst['enemy_group'].remove(enemy)
                         boom = Boom(image=config.image_dict['blank'][0],
                                     images=config.image_dict['boom'],
@@ -141,8 +142,7 @@ class Bullet(pygame.sprite.Sprite):
                 if self.from_tank.is_strong:
                     config.Maps.group_lst['iron_group'].remove(iron)
                 elif not self.from_tank.is_strong and self.type == 0:
-                    pygame.mixer.music.load(config.audio_dict['hit-iron'])
-                    pygame.mixer.music.play()
+                    config.audio_dict['hit-iron'].play()
                 if self.type == 0:
                     config.Maps.group_lst['player_bullet_group'].remove(self)
                 else:
@@ -161,8 +161,7 @@ class Bullet(pygame.sprite.Sprite):
                     f = True
                     break
                 elif not self.from_tank.is_strong and self.type == 0:
-                    pygame.mixer.music.load(config.audio_dict['slime'])
-                    pygame.mixer.music.play()
+                    config.audio_dict['slime'].play()
                 if self.rebounds == 0:
                     if self.type == 0:
                         config.Maps.group_lst['player_bullet_group'].remove(self)
@@ -170,7 +169,7 @@ class Bullet(pygame.sprite.Sprite):
                         config.Maps.group_lst['enemy_bullet_group'].remove(self)
                     break
                 # if self.type == 0:
-                # pygame.mixer.music.load(config.audio_dict['slime'])
+                # config.audio_dict['slime'])
                 # pygame.mixer.music.play()
                 self.dirs = (self.dirs + 2) % 4
                 self.updates()
@@ -252,8 +251,7 @@ class TrackingBomb(pygame.sprite.Sprite):
 
     def collide(self):
         if pygame.sprite.collide_rect(self, self.to_tank):
-            pygame.mixer.music.load(config.audio_dict['boom'])
-            pygame.mixer.music.play()
+            config.audio_dict['boom'].play()
             config.Maps.group_lst['tracking_bomb_group'].remove(self)
             config.Maps.group_lst['enemy_group'].remove(self.to_tank)
             boom = Boom(image=config.image_dict['blank'][3],

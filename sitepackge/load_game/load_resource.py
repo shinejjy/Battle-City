@@ -1,4 +1,5 @@
 import pygame
+
 from sitepackge import config
 
 unit = 68
@@ -262,19 +263,18 @@ def load_image():
 
 def load_audio():
     print("正在加载声音资源......")
-    config.audio_dict['fire'] = './audios/fire.mp3'
-    config.audio_dict['boom'] = './audios/boom.mp3'
-    config.audio_dict['button'] = './audios/button.mp3'
-    config.audio_dict['iron_break'] = './audios/iron_break.mp3'
-    config.audio_dict['lose'] = './audios/lose.mp3'
-    config.audio_dict['tree'] = './audios/tree.mp3'
-    config.audio_dict['win'] = './audios/win.mp3'
-    config.audio_dict['food'] = './audios/food.mp3'
-    config.audio_dict['hit-iron'] = './audios/hit-iron.mp3'
-    config.audio_dict['loading'] = './audios/loading.mp3'
-    config.audio_dict['upgrade'] = './audios/upgrade.mp3'
-    config.audio_dict['slime'] = './audios/slime.mp3'
-    config.audio_dict['move_speed'] = './audios/move_speed.mp3'
+    config.audio_dict['fire'] = pygame.mixer.Sound('./audios/fire.mp3')
+    config.audio_dict['boom'] = pygame.mixer.Sound('./audios/boom.mp3')
+    config.audio_dict['button'] = pygame.mixer.Sound('./audios/button.mp3')
+    config.audio_dict['lose'] = pygame.mixer.Sound('./audios/lose.mp3')
+    config.audio_dict['tree'] = pygame.mixer.Sound('./audios/tree.mp3')
+    config.audio_dict['win'] = pygame.mixer.Sound('./audios/win.mp3')
+    config.audio_dict['food'] = pygame.mixer.Sound('./audios/food.mp3')
+    config.audio_dict['hit-iron'] = pygame.mixer.Sound('./audios/hit-iron.mp3')
+    config.audio_dict['loading'] = pygame.mixer.Sound('./audios/loading.mp3')
+    config.audio_dict['upgrade'] = pygame.mixer.Sound('./audios/upgrade.mp3')
+    config.audio_dict['slime'] = pygame.mixer.Sound('./audios/slime.mp3')
+    config.audio_dict['move_speed'] = pygame.mixer.Sound('./audios/move_speed.mp3')
     print("加载声音资源成功")
 
 

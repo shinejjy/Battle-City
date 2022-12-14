@@ -1,13 +1,15 @@
+import sys
 import time
+from decimal import Decimal
+
 import pygame
+from PIL import Image as Img
+
 from sitepackge import config
 from sitepackge.load_game import load_resource, map_create
-from sitepackge.load_game.menu import Menu, Button, Text, Gif
-from PIL import Image as Img
-from sitepackge.load_game.pic_process import MyGaussianBlur
-import sys
-from decimal import Decimal
 from sitepackge.load_game.load_menu import load_menu
+from sitepackge.load_game.menu import Menu, Button, Text, Gif
+from sitepackge.load_game.pic_process import MyGaussianBlur
 
 
 def resize(pre_screen, screen_width, screen_height):
@@ -67,8 +69,7 @@ class Game:
         self.Maps.select_level(index)
 
     def loading_movie(self):
-        pygame.mixer.music.load(config.audio_dict['loading'])
-        pygame.mixer.music.play()
+        config.audio_dict['loading'].play()
         for index in range(121):
             self.screen.fill((0, 0, 0))
             self.screen.blit(config.image_dict['loading_gif'][index], ((self.width - 750) / 2, (self.height - 750) / 2))
@@ -78,8 +79,7 @@ class Game:
         pygame.event.clear()
 
     def lose_stage(self, now_screen):
-        pygame.mixer.music.load(config.audio_dict['lose'])
-        pygame.mixer.music.play()
+        config.audio_dict['lose'].play()
         width, height = now_screen.get_size()
         unit = Decimal(width // 17)
         gameover = config.image_dict['gameover'][0].copy()
@@ -131,8 +131,7 @@ class Game:
             self.fclock.tick(60)  # 控制刷新的时间
 
     def win_stage(self):
-        pygame.mixer.music.load(config.audio_dict['win'])
-        pygame.mixer.music.play()
+        config.audio_dict['win'].play()
         index = 0
         unit = self.width / 17
         width = config.image_dict['win_gif'][0].get_width()

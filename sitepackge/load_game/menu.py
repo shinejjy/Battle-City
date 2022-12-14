@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 import time
-from sitepackge import config
 
 import pygame
+
+from sitepackge import config
 
 
 def get_text_surface(text, color, font):
@@ -123,8 +125,7 @@ class Button:
             if self.effect:
                 pygame.draw.rect(surface, (255, 0, 0), self.rect, 3)
             if pygame.mouse.get_pressed()[0] and not self.clicked:
-                pygame.mixer.music.load(config.audio_dict['button'])
-                pygame.mixer.music.play()
+                config.audio_dict['button'].play()
                 self.clicked = True
                 action = True
 

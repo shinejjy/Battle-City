@@ -1,10 +1,12 @@
-import pygame
 import random
-from sitepackge.element.effect import Bullet, Blood, TrackingBomb, Cover
+import time
+
+import pygame
+
 from sitepackge import config
+from sitepackge.element.effect import Bullet, Blood, TrackingBomb, Cover
 from sitepackge.load_game import load_resource
 from sitepackge.load_game.load_resource import image_unit as unit
-import time
 
 
 def initial_positions(rect):
@@ -87,8 +89,7 @@ class Tank(pygame.sprite.Sprite):
         if tank_type == 0:
             if pygame.sprite.spritecollideany(self, config.Maps.group_lst['tree_group']):
                 if not self.tree_music:
-                    pygame.mixer.music.load(config.audio_dict['tree'])
-                    pygame.mixer.music.play()
+                    config.audio_dict['tree'].play()
                     self.tree_music = True
             else:
                 self.tree_music = False
@@ -157,7 +158,7 @@ class Tank(pygame.sprite.Sprite):
                 food.effect(self)
                 del food
 
-    def __fire__(self):
+    def fire(self):
         fire_time = time.time()
         if fire_time - self.fire_time < self.fire_space - self.is_shot_faster:
             return
@@ -171,8 +172,7 @@ class Tank(pygame.sprite.Sprite):
                         from_tank=self.father_tank if self.tank_type == 2 else self)
         if self.tank_type == 0:
             config.Maps.group_lst['player_bullet_group'].add(bullet)
-            pygame.mixer.music.load(config.audio_dict['fire'])
-            pygame.mixer.music.play()
+            config.audio_dict['fire'].play()
         elif self.tank_type == 1:
             config.Maps.group_lst['enemy_bullet_group'].add(bullet)
         elif self.tank_type == 2:
@@ -325,7 +325,7 @@ class Player(Tank):
             self.is_move = True
         # if event.key == pygame.K_j:
         if key_list[self.player_control[4]]:
-            self.__fire__()
+            self.fire()
 
         if key_list[self.player_control[5]]:
             self.tracking_bomb()
@@ -461,7 +461,7 @@ class Enemy(Tank):
             self.rect.top = self.old_topleft[1]
         self.image = self.images[self.dir][self.dir_lst[self.dir]]
         self.dir_lst[self.dir] = 1 - self.dir_lst[self.dir]
-        self.__fire__()  # 敌方坦克开火
+        self.fire()  # 敌方坦克开火
 
         if self.collide(1):  # 判断是否发生碰撞
             self.dir = (self.dir + random.randint(1, 3)) % 4
@@ -519,7 +519,7 @@ class MiniTank(Tank):
             self.rect.top = self.old_topleft[1]
         self.image = self.images[self.dir][self.dir_lst[self.dir]]
         self.dir_lst[self.dir] = 1 - self.dir_lst[self.dir]
-        self.__fire__()  # 敌方坦克开火
+        self.fire()  # 敌方坦克开火
 
         if self.collide(0):  # 判断是否发生碰撞
             self.dir = (self.dir + random.randint(1, 3)) % 4
