@@ -1,6 +1,11 @@
 # Battle-City
 ## 使用说明
-用python3.8运行StartGame.py
+### _若您有python环境_
+请先pip install pygame\
+然后用python3.8运行 _StartGame.py_
+### _若您并没有python环境_
+您可以直接下载项目中的 _Battle-City/BattleCity游戏启动器.zip_\
+下载完毕之后，解压然后阅读 _游玩前必读.txt_ 文件
 ## 地图编辑器
 use中的地图编辑器可以根据颜色与编码的映射绘制出一个13*13的地图，最后创建的编码也正是map_data.lvl文件中所需要的格式，这样使创建地图的工作更为简单、直观。
 ## 更新日志
